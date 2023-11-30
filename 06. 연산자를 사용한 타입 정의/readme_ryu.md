@@ -16,7 +16,7 @@ function logText(text: string | number) {
   console.log(text);
 }
 
-printID("ABC"); // 문자열 전달
+printID('ABC'); // 문자열 전달
 printID(123); // 숫자 전달
 ```
 
@@ -49,6 +49,16 @@ function logNumber(text: number) {
 ```typescript
 function logText(text: string | number) {
   console.log(text);
+}
+```
+
+#### Other Example
+
+```typescript
+type FormatKey = 'L' | 'LL' | 'LLL';
+
+function formatTime(date: string | number | Date | dayjs, key: FormatKey) {
+  return dayjs(date).format(key);
 }
 ```
 
@@ -98,10 +108,10 @@ interface Developer {
 }
 
 function introduce(someone: Person | Developer) {
-  if ("age" in someone) {
+  if ('age' in someone) {
     console.log(someone.age);
   }
-  if ("skill" in someone) {
+  if ('skill' in someone) {
     console.log(someone.skill);
   }
 }
@@ -113,10 +123,10 @@ function introduce(someone: Person | Developer) {
 
 ```typescript
 function logText(text: string | number) {
-  if (typeof text === "string") {
+  if (typeof text === 'string') {
     console.log(text.toLocaleUpperCase());
   }
-  if (typeof text === "number") {
+  if (typeof text === 'number') {
     console.log(text.toLocaleString());
   }
 }
@@ -145,7 +155,7 @@ function introduce(someone: Avenger & Hero) {
   console.log(someone.skill);
 }
 
-introduce({ name: "캡틴", skill: "어셈블" });
+introduce({ name: '캡틴', skill: '어셈블' });
 ```
 
 <br/>
@@ -157,7 +167,7 @@ introduce({ name: "캡틴", skill: "어셈블" });
 #### Before
 
 ```typescript
-introduce({ name: "캡틴" }); // 🚨 skill 속성이 누락되었기 때문에 에러 발생
+introduce({ name: '캡틴' }); // 🚨 skill 속성이 누락되었기 때문에 에러 발생
 ```
 
 #### After
@@ -165,5 +175,5 @@ introduce({ name: "캡틴" }); // 🚨 skill 속성이 누락되었기 때문에
 결합된 두 타입의 모든 속성을 만족하는 인자를 전달해야 한다.
 
 ```typescript
-introduce({ name: "캡틴", skill: "어셈블" });
+introduce({ name: '캡틴', skill: '어셈블' });
 ```
