@@ -18,7 +18,7 @@ const str: MyStringType = "world"; // 타입 별칭을 사용한 타입 지정
 
 ### 장점
 
-#### 반복되는 타입의 코드를 줄일 수 있다
+#### 1. 반복되는 타입의 코드를 줄일 수 있다
 
 ##### Before
 
@@ -57,6 +57,29 @@ getFullName(user);
 
 <br/>
 
+#### 2. 타입의 유형을 더 세밀하게 표현해 코드의 동작을 더 이해하기 쉽게 만들 수 있다.
+
+##### Before
+
+```typescript
+function calculateRectangleArea(width: number, height: number): number {
+  return width * height;
+}
+```
+
+##### After
+
+```typescript
+type Centimeter = number;
+
+function calculateRectangleArea(
+  width: Centimeter,
+  height: Centimeter
+): Centimeter {
+  return width * height;
+}
+```
+
 ### 주의사항
 
 타입별칭의 이름이 중복되면 안된다.<br/>
@@ -76,6 +99,14 @@ type User = { firstName: string; lastName: string; age: number }; // Error
 ### 1. 코드 에디터에서 표기 방식 차이
 
 동일한 속성과 타입을 갖는 객체를 타입별칭과 인터페이스로 정의하고 코드 에디터에서 확인해보면 차이점을 알 수 있다.
+
+#### type 사용시
+
+<img width="320" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/53801395/416e9428-7962-442d-8818-03c858d32a83">
+
+#### interface 사용시
+
+<img width="355" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/53801395/f648d7cc-3773-45b7-86b9-99aacd92f317">
 
 ### 2. 사용할 수 있는 타입의 차이
 
@@ -193,3 +224,32 @@ interface User {
   department: number;
 }
 ```
+
+## object type에 대해 잘못 알고 있는 사실
+
+우리는 흔히 object type(`{}`)에 대해 잘못 알고 있다.
+보통 object type을 객체 리터럴로 알고 있고 있기 때문이다.
+
+```typescript
+const me: { age: number; name: string } = { age: 27, name: 'NaJaeWan' };
+```
+
+그러면 다음과 같은 코드는 이해하지 못하게 된다.
+
+```typescript
+const x: {} = 1; // 이게 왜 오류가 안나는거죠??
+```
+
+object type은 <b>조건/제약</b>과 비슷하다.  
+즉 `{ age: number, name: string }`이란 타입은 알 수 없는 타입에 age와 name이란 속성에 엑세스할 수 있어야하고
+그 속성의 값의 타입은 number, string이여야 한다는 것이다.  
+`const x: {} = 1; `의 경우에는 알 수 없는 타입에 그 어떤 속성에도 관심 없는 타입을 말한다는 것이다.
+그래서 1이 아닌 그 어떤 타입의 값이 와도 오류가 나질 않는다.
+
+또한 자바스크립트의 모든 타입은 toString()라는 내장메소드를 갖고있으므로 아래의 코드도 문제가 없다.
+
+```typescript
+const x: { toString(): string } = 1;
+```
+
+정리하자면 object type(`{}`)은 빈 객체가 아니라 <b>어떤 타입의 조건/제약을 명시</b>하는 것이라고 생각하면 된다.
