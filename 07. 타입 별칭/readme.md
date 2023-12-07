@@ -260,16 +260,17 @@ const x: { toString(): string } = 1;
 
 ### 1. 기본적인 타입 별칭 활용
 
-다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하세요.<br/>
-숫자 배열을 나타내는 타입으로 NumberArray라는 타입 별칭을 정의합니다.<br/>
-문자열과 숫자를 속성으로 가지는 객체를 나타내는 타입으로 Person이라는 타입 별칭을 정의합니다.
+#### 다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하세요.<br/>
+- 숫자 배열을 나타내는 타입으로 NumberArray라는 타입 별칭을 정의합니다.<br/>
+- 문자열과 숫자를 속성으로 가지는 객체를 나타내는 타입으로 Person이라는 타입 별칭을 정의합니다.
 
 ```typescript
 // 사용 예시
 const numbers: NumberArray = [1, 2, 3, 4, 5];
 const person: Person = { name: "John", age: 30 };
-
-// ⬇️ 답안 작성
+```
+⬇️ 답안
+```typescript
 type NumberArray = number[];
 type Person = {
   name: string;
@@ -279,9 +280,9 @@ type Person = {
 
 ### 2. 타입 별칭 확장
 
-다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하고 확장하세요.<br/>
-숫자를 나타내는 기본 타입으로 NumberType이라는 타입 별칭을 정의합니다.<br/>
-NumberType을 확장하면서 isPositive라는 속성을 추가한 새로운 타입 PositiveNumber를 정의합니다.
+#### 다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하고 확장하세요.<br/>
+- 숫자를 나타내는 기본 타입으로 NumberType이라는 타입 별칭을 정의합니다.<br/>
+- NumberType을 확장하면서 isPositive라는 속성을 추가한 새로운 타입 PositiveNumber를 정의합니다.
 
 ```typescript
 // 사용 예시
@@ -289,8 +290,10 @@ const positiveNumber: PositiveNumber = {
   value: 42,
   isPositive: true,
 };
+```
 
-// ⬇️ 답안 작성
+⬇️ 답안
+```typescript
 type NumberType = { value: number };
 
 type PositiveNumber = NumberType & {
@@ -300,10 +303,10 @@ type PositiveNumber = NumberType & {
 
 ### 3. 인터페이스 확장과 선언 병합
 
-다음의 요구 사항에 따라 인터페이스를 사용하여 타입을 정의하고 선언 병합을 활용하세요.<br/>
-사람을 나타내는 기본 인터페이스로 Person이라는 인터페이스를 정의합니다. (이름과 나이 속성을 포함)<br/>
-Person을 확장하여 학생을 나타내는 인터페이스 Student를 정의합니다. (학번 속성을 추가)<br/>
-기존의 Person 인터페이스에 gender 속성을 추가하여 새로운 선언을 만들어봅니다.
+#### 다음의 요구 사항에 따라 인터페이스를 사용하여 타입을 정의하고 선언 병합을 활용하세요.<br/>
+1.  사람을 나타내는 기본 인터페이스로 Person이라는 인터페이스를 정의합니다. (이름과 나이 속성을 포함)<br/>
+2. Person을 확장하여 학생을 나타내는 인터페이스 Student를 정의합니다. (학번 속성을 추가)<br/>
+3. 기존의 Person 인터페이스에 gender 속성을 추가하여 새로운 선언을 만들어봅니다.
 
 ```typescript
 // 사용 예시
@@ -313,8 +316,9 @@ const student: Student = {
   studentId: "54321",
   gender: "Male",
 };
-
-// ⬇️ 답안 작성
+```
+⬇️ 답안
+```typescript
 interface Person {
   name: string;
   age: number;
@@ -327,8 +331,9 @@ interface Student extends Person {
 interface Person {
   gender: string;
 }
-
-// ➕ 인터페이스로 바꿔보기
+```
+➕ 인터페이스로 바꿔보기
+```typescript
 interface NumberType {
   value: number;
 }
