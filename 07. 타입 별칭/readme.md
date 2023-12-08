@@ -378,13 +378,17 @@ const positiveNumber: PositiveNumber = {
 `선언병합`은 이미 선언된 인터페이스를 확장하고, `extends` 키워드를 사용하면 새로운 인터페이스를 선언하여 기존 인터페이스를 확장한다
 
 ```typescript
-// Module 1
+// type.ts
 interface Product {
   id: string;
   price: number;
 }
+```
 
-// Module 2
+```typescript
+// Module 1
+import Product from "./type";
+
 interface Product {
   stock: number;
 }
@@ -394,8 +398,12 @@ const product: Product = {
   price: 1000,
   stock: 100,
 };
+```
 
-// Module 3
+```typescript
+// Module 2
+import Product from "./type";
+
 interface Product {
   temperature: "room" | "row";
 }
@@ -413,12 +421,10 @@ const product: Product = {
 다른 모듈에서 선언된 인터페이스를 유연하게 사용할 수 있게 된다
 
 ```typescript
-// Module 1
 interface Config {
   debugMode: boolean;
 }
 
-// Module 2
 interface Config {
   logLevel?: number;
 }
