@@ -11,7 +11,7 @@
 ```typescript
 type MyStringType = string;
 
-const str: MyStringType = "world"; // 타입 별칭을 사용한 타입 지정
+const str: MyStringType = 'world'; // 타입 별칭을 사용한 타입 지정
 ```
 
 <br/>
@@ -28,8 +28,8 @@ function getFullName(user: { firstName: string; lastName: string }) {
 }
 
 const user: { firstName: string; lastName: string } = {
-  firstName: "John",
-  lastName: "Smith",
+  firstName: 'John',
+  lastName: 'Smith',
 };
 
 getFullName(user);
@@ -48,8 +48,8 @@ function getFullName(user: User) {
 }
 
 const user: User = {
-  firstName: "ryu",
-  lastName: "jk",
+  firstName: 'ryu',
+  lastName: 'jk',
 };
 
 getFullName(user);
@@ -136,8 +136,8 @@ interface Developer extends Person {
 }
 
 const jaeKyeong: Developer = {
-  language: "typescript",
-  name: "jaekyeong",
+  language: 'typescript',
+  name: 'jaekyeong',
   age: 10,
 };
 ```
@@ -159,9 +159,9 @@ type Developer = {
 type Ryu = Person & Developer;
 
 const JaeKyeong: Ryu = {
-  name: "jaekyeong",
+  name: 'jaekyeong',
   age: 10,
-  language: "typescript",
+  language: 'typescript',
 };
 ```
 
@@ -183,7 +183,7 @@ type Admin = {
   age: number;
   role: string;
 };
-type OnlyName = Pick<Admin, "name">;
+type OnlyName = Pick<Admin, 'name'>;
 
 // 맵드 타입
 type Picker<T, K extends keyof T> = {
@@ -231,7 +231,7 @@ interface User {
 보통 object type을 객체 리터럴로 알고 있고 있기 때문이다.
 
 ```typescript
-const me: { age: number; name: string } = { age: 27, name: "NaJaeWan" };
+const me: { age: number; name: string } = { age: 27, name: 'NaJaeWan' };
 ```
 
 그러면 다음과 같은 코드는 이해하지 못하게 된다.
@@ -268,7 +268,7 @@ const x: { toString(): string } = 1;
 ```typescript
 // 사용 예시
 const numbers: NumberArray = [1, 2, 3, 4, 5];
-const person: Person = { name: "John", age: 30 };
+const person: Person = { name: 'John', age: 30 };
 ```
 
 ⬇️ 답안
@@ -317,10 +317,10 @@ type PositiveNumber = NumberType & {
 ```typescript
 // 사용 예시
 const student: Student = {
-  name: "Bob",
+  name: 'Bob',
   age: 22,
-  studentId: "54321",
-  gender: "Male",
+  studentId: '54321',
+  gender: 'Male',
 };
 ```
 
@@ -387,14 +387,14 @@ interface Product {
 
 ```typescript
 // Module 1
-import Product from "./type";
+import Product from './type';
 
 interface Product {
   stock: number;
 }
 
 const product: Product = {
-  id: "id1",
+  id: 'id1',
   price: 1000,
   stock: 100,
 };
@@ -402,16 +402,16 @@ const product: Product = {
 
 ```typescript
 // Module 2
-import Product from "./type";
+import Product from './type';
 
 interface Product {
-  temperature: "room" | "row";
+  temperature: 'room' | 'row';
 }
 
 const product: Product = {
-  id: "id1",
+  id: 'id1',
   price: 1000,
-  temperature: "room",
+  temperature: 'room',
 };
 ```
 
@@ -450,4 +450,27 @@ interface ExternalLibrary {
 interface ExternalLibrary {
   methodB(): string;
 }
+```
+
+### 사용 예시
+
+타입 선언 병합을 이용해 react-beautiful-dnd 라는 서드파티를 확장할 수 있습니다.
+
+```typescript
+// react-beautiful-dnd.d.ts
+declare module 'react-beautiful-dnd' {
+  function Draggable(): JSX.Element;
+}
+```
+
+react-beautiful-dnd 모듈을 선언하여 커스텀 메소드를 만들면  
+아래와 같이 다른 곳에서 활용할 수 있습니다.
+
+```typescript
+import { render } from 'react-dom';
+import { Draggable } from 'react-beautiful-dnd';
+
+const rootElement = document.getElementById('root');
+
+render(<Draggable />, rootElement);
 ```
