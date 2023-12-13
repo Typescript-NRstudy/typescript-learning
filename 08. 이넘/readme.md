@@ -129,26 +129,12 @@ enum Authorization {
 
 #### `일반 이넘` 컴파일 결과
 
-일반 이넘은 컴파일될 때 객체가 이넘 속성 이름과 값을 연결해주는 객체를 생성한다
+일반 이넘은 컴파일될 때 이넘 속성 이름과 값을 연결해주는 객체를 생성한다
 
-```typescript
-enum logLevel {
-  ERROR = "ERROR",
-  WARN = "WARN",
-  INFO = "INFO",
-  DEBUG = "DEBUG",
-}
-```
+<img width="527" alt="스크린샷 2023-12-13 오후 4 31 25" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/4e6f02a2-08e2-49bf-9460-8ce3d6030328">
 
 #### `const 이넘` 컴파일 결과
 
 const 이넘은 컴파일 시점에 객체를 생성하지 않고, 이넘의 속성 이름과 값을 바로 연결해준다
 
-```typescript
-const enum logLevel {
-  ERROR = "ERROR",
-  WARN = "WARN",
-  INFO = "INFO",
-  DEBUG = "DEBUG",
-}
-```
+<img width="483" alt="스크린샷 2023-12-13 오후 4 32 21" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/20a4d1f6-286b-4130-a377-634e6e3a9ce9">
