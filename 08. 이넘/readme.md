@@ -68,9 +68,9 @@ enum Language {
 
 ```typescript
 enum Language {
-  Korean = "ko",
-  English = "en",
-  Japanese = "jp",
+  Korean = 'ko',
+  English = 'en',
+  Japanese = 'jp',
 }
 ```
 
@@ -79,9 +79,9 @@ enum Language {
 
 ```typescript
 enum Language {
-  Korean = "Korean",
-  English = "English",
-  Japanese = "Japanese",
+  Korean = 'Korean',
+  English = 'English',
+  Japanese = 'Japanese',
 }
 ```
 
@@ -96,7 +96,7 @@ enum Language {
 
 ```typescript
 enum Answer {
-  Yes = "Yes",
+  Yes = 'Yes',
   No = 0,
 }
 ```
@@ -116,7 +116,7 @@ enum Authorization {
   User, // 0
   Admin, // 1
   SuperAdmin = User + Admin, // 1️⃣ a
-  God = "abc".length, // 2️⃣ 3
+  God = 'abc'.length, // 2️⃣ 3
 }
 ```
 
@@ -138,3 +138,24 @@ enum Authorization {
 const 이넘은 컴파일 시점에 객체를 생성하지 않고, 이넘의 속성 이름과 값을 바로 연결해준다
 
 <img width="483" alt="스크린샷 2023-12-13 오후 4 32 21" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/20a4d1f6-286b-4130-a377-634e6e3a9ce9">
+
+### 일반 이넘은 되도록이면 지양하자
+
+TypeScript에서 enum을 사용하면 Tree-shaking이 되지 않습니다
+
+```javascript
+'use strict';
+var logLevel;
+(function (logLevel) {
+  logLevel['ERROR'] = 'ERROR';
+  logLevel['WARN'] = 'WARN';
+  logLevel['INFO'] = 'INFO';
+  logLevel['DEBUG'] = 'DEBUG';
+})(logLevel || (logLevel = {}));
+```
+
+일반 이넘을 트랜스파일을 하면 위의 코드처럼 즉시 실행 함수가 생성됩니다.JavaScript에 존재하지 않는 것을 구현하기 때문에 TypeScript 컴파일러는 IIFE(즉시 실행 함수)를 포함한 코드를 생성하게 됩니다. 그런데 Rollup과 같은 번들러는 IIFE를 '사용하지 않는 코드'라고 판단할 수 없어서 Tree-shaking(사용하지 않는 코드를 삭제하는 것)이 되지 않습니다.
+
+결국 logLevel을 import하고 실제로는 사용하지 않더라도 최종 번들에는 포함되어 불필요하게 번들링 사이즈가 커지게 됩니다.
+
+[참고 링크](https://engineering.linecorp.com/ko/blog/typescript-enum-tree-shaking)
