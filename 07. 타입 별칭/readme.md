@@ -11,7 +11,7 @@
 ```typescript
 type MyStringType = string;
 
-const str: MyStringType = "world"; // 타입 별칭을 사용한 타입 지정
+const str: MyStringType = 'world'; // 타입 별칭을 사용한 타입 지정
 ```
 
 <br/>
@@ -28,8 +28,8 @@ function getFullName(user: { firstName: string; lastName: string }) {
 }
 
 const user: { firstName: string; lastName: string } = {
-  firstName: "John",
-  lastName: "Smith",
+  firstName: 'John',
+  lastName: 'Smith',
 };
 
 getFullName(user);
@@ -48,8 +48,8 @@ function getFullName(user: User) {
 }
 
 const user: User = {
-  firstName: "ryu",
-  lastName: "jk",
+  firstName: 'ryu',
+  lastName: 'jk',
 };
 
 getFullName(user);
@@ -136,8 +136,8 @@ interface Developer extends Person {
 }
 
 const jaeKyeong: Developer = {
-  language: "typescript",
-  name: "jaekyeong",
+  language: 'typescript',
+  name: 'jaekyeong',
   age: 10,
 };
 ```
@@ -159,9 +159,9 @@ type Developer = {
 type Ryu = Person & Developer;
 
 const JaeKyeong: Ryu = {
-  name: "jaekyeong",
+  name: 'jaekyeong',
   age: 10,
-  language: "typescript",
+  language: 'typescript',
 };
 ```
 
@@ -183,7 +183,7 @@ type Admin = {
   age: number;
   role: string;
 };
-type OnlyName = Pick<Admin, "name">;
+type OnlyName = Pick<Admin, 'name'>;
 
 // 맵드 타입
 type Picker<T, K extends keyof T> = {
@@ -231,7 +231,7 @@ interface User {
 보통 object type을 객체 리터럴로 알고 있고 있기 때문이다.
 
 ```typescript
-const me: { age: number; name: string } = { age: 27, name: "NaJaeWan" };
+const me: { age: number; name: string } = { age: 27, name: 'NaJaeWan' };
 ```
 
 그러면 다음과 같은 코드는 이해하지 못하게 된다.
@@ -261,15 +261,18 @@ const x: { toString(): string } = 1;
 ### 1. 기본적인 타입 별칭 활용
 
 #### 다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하세요.<br/>
+
 - 숫자 배열을 나타내는 타입으로 NumberArray라는 타입 별칭을 정의합니다.<br/>
 - 문자열과 숫자를 속성으로 가지는 객체를 나타내는 타입으로 Person이라는 타입 별칭을 정의합니다.
 
 ```typescript
 // 사용 예시
 const numbers: NumberArray = [1, 2, 3, 4, 5];
-const person: Person = { name: "John", age: 30 };
+const person: Person = { name: 'John', age: 30 };
 ```
+
 ⬇️ 답안
+
 ```typescript
 type NumberArray = number[];
 type Person = {
@@ -281,6 +284,7 @@ type Person = {
 ### 2. 타입 별칭 확장
 
 #### 다음의 요구 사항에 따라 타입 별칭을 사용하여 타입을 정의하고 확장하세요.<br/>
+
 - 숫자를 나타내는 기본 타입으로 NumberType이라는 타입 별칭을 정의합니다.<br/>
 - NumberType을 확장하면서 isPositive라는 속성을 추가한 새로운 타입 PositiveNumber를 정의합니다.
 
@@ -293,6 +297,7 @@ const positiveNumber: PositiveNumber = {
 ```
 
 ⬇️ 답안
+
 ```typescript
 type NumberType = { value: number };
 
@@ -304,20 +309,23 @@ type PositiveNumber = NumberType & {
 ### 3. 인터페이스 확장과 선언 병합
 
 #### 다음의 요구 사항에 따라 인터페이스를 사용하여 타입을 정의하고 선언 병합을 활용하세요.<br/>
+
 1.  사람을 나타내는 기본 인터페이스로 Person이라는 인터페이스를 정의합니다. (이름과 나이 속성을 포함)<br/>
-2. Person을 확장하여 학생을 나타내는 인터페이스 Student를 정의합니다. (학번 속성을 추가)<br/>
-3. 기존의 Person 인터페이스에 gender 속성을 추가하여 새로운 선언을 만들어봅니다.
+2.  Person을 확장하여 학생을 나타내는 인터페이스 Student를 정의합니다. (학번 속성을 추가)<br/>
+3.  기존의 Person 인터페이스에 gender 속성을 추가하여 새로운 선언을 만들어봅니다.
 
 ```typescript
 // 사용 예시
 const student: Student = {
-  name: "Bob",
+  name: 'Bob',
   age: 22,
-  studentId: "54321",
-  gender: "Male",
+  studentId: '54321',
+  gender: 'Male',
 };
 ```
+
 ⬇️ 답안
+
 ```typescript
 interface Person {
   name: string;
@@ -332,7 +340,9 @@ interface Person {
   gender: string;
 }
 ```
+
 ➕ 인터페이스로 바꿔보기
+
 ```typescript
 interface NumberType {
   value: number;
@@ -358,3 +368,109 @@ const positiveNumber: PositiveNumber = {
 
 - 인터페이스 : extends 키워드를 사용하여 상속이 가능하고, 선언 병합을 기존 인터페이스에 속성을 추가할 수 있다.
 - 타입 별칭 : 다양한 타입을 합성하여 새로운 타입을 정의할 수 있다.
+
+<br/>
+
+## 목적에 따른 인터페이스 선언병합 활용
+
+### 1. 인터페이스 확장(Interface Extension)
+
+`선언병합`은 이미 선언된 인터페이스를 확장하고, `extends` 키워드를 사용하면 새로운 인터페이스를 선언하여 기존 인터페이스를 확장한다
+
+```typescript
+// type.ts
+interface Product {
+  id: string;
+  price: number;
+}
+```
+
+```typescript
+// Module 1
+import Product from './type';
+
+interface Product {
+  stock: number;
+}
+
+const product: Product = {
+  id: 'id1',
+  price: 1000,
+  stock: 100,
+};
+```
+
+```typescript
+// Module 2
+import Product from './type';
+
+interface Product {
+  temperature: 'room' | 'row';
+}
+
+const product: Product = {
+  id: 'id1',
+  price: 1000,
+  temperature: 'room',
+};
+```
+
+### 2. 선택적 속성(Optional Properties) 활용
+
+선언병합을 활용하면 동일한 인터페이스를 여러 번 선언하여 선택적 속성을 추가할 수 있다<br/>
+다른 모듈에서 선언된 인터페이스를 유연하게 사용할 수 있게 된다
+
+```typescript
+interface Config {
+  debugMode: boolean;
+}
+
+interface Config {
+  logLevel?: number;
+}
+
+const config: Config = {
+  debugMode: true,
+  logLevel: 3,
+};
+```
+
+### 3. 선언의 확장(Declaration Augmentation)
+
+선언병합을 활용하면 이미 선언된 인터페이스에 새로운 속성이나 메서드를 추가할 수 있다<br/>
+이는 기존 라이브러리에 새로운 기능을 추가하거나 타사 라이브러리의 타입을 보강할 때 유용하다
+
+```typescript
+// 라이브러리 또는 외부 패키지에서 정의된 인터페이스
+interface ExternalLibrary {
+  methodA(): void;
+}
+
+// 타입스크립트 파일에서 선언 병합을 이용한 확장
+interface ExternalLibrary {
+  methodB(): string;
+}
+```
+
+### 사용 예시
+
+타입 선언 병합을 이용해 react-beautiful-dnd 라는 서드파티를 확장할 수 있습니다.
+
+```typescript
+// react-beautiful-dnd.d.ts
+declare module 'react-beautiful-dnd' {
+  function Draggable(): JSX.Element;
+}
+```
+
+react-beautiful-dnd 모듈을 선언하여 커스텀 메소드를 만들면  
+아래와 같이 다른 곳에서 활용할 수 있습니다.
+
+```typescript
+import { render } from 'react-dom';
+import { Draggable } from 'react-beautiful-dnd';
+
+const rootElement = document.getElementById('root');
+
+render(<Draggable />, rootElement);
+```
