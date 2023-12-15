@@ -68,9 +68,9 @@ enum Language {
 
 ```typescript
 enum Language {
-  Korean = 'ko',
-  English = 'en',
-  Japanese = 'jp',
+  Korean = "ko",
+  English = "en",
+  Japanese = "jp",
 }
 ```
 
@@ -79,9 +79,9 @@ enum Language {
 
 ```typescript
 enum Language {
-  Korean = 'Korean',
-  English = 'English',
-  Japanese = 'Japanese',
+  Korean = "Korean",
+  English = "English",
+  Japanese = "Japanese",
 }
 ```
 
@@ -96,7 +96,7 @@ enum Language {
 
 ```typescript
 enum Answer {
-  Yes = 'Yes',
+  Yes = "Yes",
   No = 0,
 }
 ```
@@ -116,7 +116,7 @@ enum Authorization {
   User, // 0
   Admin, // 1
   SuperAdmin = User + Admin, // 1️⃣ a
-  God = 'abc'.length, // 2️⃣ 3
+  God = "abc".length, // 2️⃣ 3
 }
 ```
 
@@ -139,18 +139,20 @@ const 이넘은 컴파일 시점에 객체를 생성하지 않고, 이넘의 속
 
 <img width="483" alt="스크린샷 2023-12-13 오후 4 32 21" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/20a4d1f6-286b-4130-a377-634e6e3a9ce9">
 
+<br/>
+
 ### 일반 이넘은 되도록이면 지양하자
 
 TypeScript에서 enum을 사용하면 Tree-shaking이 되지 않습니다
 
 ```javascript
-'use strict';
+"use strict";
 var logLevel;
 (function (logLevel) {
-  logLevel['ERROR'] = 'ERROR';
-  logLevel['WARN'] = 'WARN';
-  logLevel['INFO'] = 'INFO';
-  logLevel['DEBUG'] = 'DEBUG';
+  logLevel["ERROR"] = "ERROR";
+  logLevel["WARN"] = "WARN";
+  logLevel["INFO"] = "INFO";
+  logLevel["DEBUG"] = "DEBUG";
 })(logLevel || (logLevel = {}));
 ```
 
@@ -159,3 +161,37 @@ var logLevel;
 결국 logLevel을 import하고 실제로는 사용하지 않더라도 최종 번들에는 포함되어 불필요하게 번들링 사이즈가 커지게 됩니다.
 
 [참고 링크](https://engineering.linecorp.com/ko/blog/typescript-enum-tree-shaking)
+
+<br/>
+
+## 퀴즈
+
+### 문자열 이넘 활용
+
+사용자로부터 입력받은 지역명에 해당하는 City 이넘 값을 활용하여, 해당 지역에 대한 소개 메시지를 출력하는 코드를 작성하세요.
+
+```typescript
+enum City {
+  SEOUL = "서울",
+  BUSAN = "부산",
+}
+
+let userInput: string = "서울"; // 사용자로부터 도시명을 입력받는다
+
+// 여기에 코드를 작성하세요
+
+/* 
+  예시 입력: "서울"
+  출력 결과: "서울은 현대적이고 다양한 즐길거리가 많은 도시입니다."
+  
+  예시 입력: "부산"
+  출력 결과: "부산은 아름다운 해변과 신선한 해산물이 유명한 도시입니다."
+  
+  예시 입력: "인천"
+  출력 결과: "해당하는 도시의 여행 정보를 찾을 수 없습니다."
+*/
+```
+
+### const 이넘의 장점
+
+`일반 enum` 보다 `const enum` 을 사용하는 이유는 무엇인가?
