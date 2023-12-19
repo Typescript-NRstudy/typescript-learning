@@ -179,6 +179,16 @@ enum City {
 let userInput: string = "서울"; // 사용자로부터 도시명을 입력받는다
 
 // 여기에 코드를 작성하세요
+switch (userInput) {
+  case Center.SEOUL:
+    console.log("서울은 현대적이고 다양한 즐길거리가 많은 도시입니다.");
+    break;
+  case Center.BUSAN:
+    console.log("부산은 아름다운 해변과 신선한 해산물이 유명한 도시입니다.");
+    break;
+  default:
+    console.log("해당하는 도시의 여행 정보를 찾을 수 없습니다.");
+}
 
 /* 
   예시 입력: "서울"
@@ -195,3 +205,6 @@ let userInput: string = "서울"; // 사용자로부터 도시명을 입력받�
 ### const 이넘의 장점
 
 `일반 enum` 보다 `const enum` 을 사용하는 이유는 무엇인가?
+
+- 코드 크기 최적화 및 성능 향상
+  - const enum을 사용하는 주된 이유는 코드 크기 최적화와 성능 향상을 이루기 위함입니다. 이 방식은 런타임에 별도의 객체를 생성하지 않고 직접 값으로 대체되기 때문에 코드가 더 효율적이고 가벼워집니다.
