@@ -236,3 +236,23 @@ class Adult {
 
 console.log(Adult.adultAge); // 18
 ```
+
+<br>
+
+## 읽기 전용 readonly
+
+타입스크립트 클래스에서도 readonly를 사용할 수 있다. 클래스에서의 readonly는 오로지 생성자 내에서만 프로퍼티를 할당할 수 있게 해준다.
+
+```typescript
+class Person {
+  readonly _birthTime: Date;
+
+  constructor() {
+    this._birthTime = new Date(); // 생성자 내에서는 할당 가능
+  }
+
+  set birthTime(time: Date) {
+    this._birthTime = time; // [ERR]: Cannot assign to 'birthTime' because it is a read-only property.
+  }
+}
+```
