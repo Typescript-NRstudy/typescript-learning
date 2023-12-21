@@ -176,3 +176,83 @@ purifier.wash(); // 정수기 동작 성공
 purifier.waterAmount = 0;
 purifier.wash(); // 메세지가 출력되지 않는다
 ```
+
+<br/>
+
+## Getter와 Setter (Accessor)
+
+클래스 속성을 엑세스하면서 필터링이나 간단한 체크를 수행할 때, 흔히 getter와 setter를 사용한다. TypeScript에서 getter를 사용하기 위해서는 메서드 앞에 get 키워드를 적으며, setter를 사용하기 위해서는 메서드 앞에 set 키워드를 적는다. 아래 예제는 Adult의 나이가 18세 미만인지를 setter에서 체크하고 있다.
+
+```typescript
+class Adult {
+  private _age: number;
+  constructor(age: number) {
+    this._age = age;
+  }
+
+  get age(): number {
+    return this._age;
+  }
+
+  set age(value: number) {
+    if (value < 18) {
+      throw new Error("Invalid age");
+    }
+    this._age = value;
+  }
+}
+
+const adult = new Adult(20);
+adult.age = 18;
+adult.age = 17; // [ERR]: Invalid age
+```
+
+<br/>
+
+## 정적 속성 (static property)
+
+정적 속성은 객체가 아닌 클래스 소속의 속성을 가리키며, 속성 앞에 static 이라는 키워드를 붙여 사용한다. 인스턴스 속성은 "this.속성명" 을 통해 엑세스하지만, 정적 속성은 "클래스명.속성명"을 사용하여 엑세스한다. 아래 예제에서 Adult 클래스에 adultAge는 정적 속성으로 정의되어 있고, 클래스 내부 혹은 외부에서 Adult.adultAge을 사용하여 엑세스하고 있다.
+
+```typescript
+class Adult {
+  static adultAge = 18;
+  private _age: number;
+  constructor(age: number) {
+    this._age = age;
+  }
+
+  get age(): number {
+    return this._age;
+  }
+
+  set age(value: number) {
+    if (value < Adult.adultAge) {
+      // 정적 속성은 내부에서도 접근 가능하다.
+      throw new Error("Invalid age");
+    }
+    this._age = value;
+  }
+}
+
+console.log(Adult.adultAge); // 18
+```
+
+<br>
+
+## 읽기 전용 readonly
+
+타입스크립트 클래스에서도 readonly를 사용할 수 있다. 클래스에서의 readonly는 오로지 생성자 내에서만 프로퍼티를 할당할 수 있게 해준다.
+
+```typescript
+class Person {
+  readonly _birthTime: Date;
+
+  constructor() {
+    this._birthTime = new Date(); // 생성자 내에서는 할당 가능
+  }
+
+  set birthTime(time: Date) {
+    this._birthTime = time; // [ERR]: Cannot assign to 'birthTime' because it is a read-only property.
+  }
+}
+```
