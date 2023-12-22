@@ -280,3 +280,61 @@ TypeScript의 다양한 클래스 관련 개념을 활용하여 다음 요구사
     - 생성자 메서드에서는 color를 초기화
     - displayInfo 메서드를 오버라이드하여 고양이의 정보를 출력하세요 (color는 따로 출력)
     - 추가로, getter와 setter를 이용하여 color 속성에 접근할 수 있습니다
+
+<br>
+
+```typescript
+// 1. Animal 클래스 정의
+class Animal {
+  protected name: string;
+  protected age: number;
+  protected species: string;
+
+  constructor(name: string, age: number, species: string) {
+    this.name = name;
+    this.age = age;
+    this.species = species;
+  }
+
+  displayInfo(): void {
+    console.log(
+      `Name: ${this.name}, Age: ${this.age}, Species: ${this.species}`
+    );
+  }
+}
+
+// 2. Cat 클래스 정의
+class Cat extends Animal {
+  private color: string;
+
+  constructor(name: string, age: number, species: string, color: string) {
+    super(name, age, species);
+    this.color = color;
+  }
+
+  displayInfo(): void {
+    super.displayInfo();
+    console.log(`Color: ${this.color}`);
+  }
+
+  get catColor(): string {
+    return this.color;
+  }
+
+  set catColor(value: string) {
+    this.color = value;
+  }
+}
+
+// 사용 예제
+const animal = new Animal("Leo", 3, "Lion");
+const cat = new Cat("Whiskers", 2, "Domestic Cat", "Gray");
+
+animal.displayInfo();
+cat.displayInfo();
+
+// 사용 예제 - getter와 setter 활용
+console.log(`Cat's color: ${cat.catColor}`);
+cat.catColor = "Black";
+console.log(`Cat's new color: ${cat.catColor}`);
+```
