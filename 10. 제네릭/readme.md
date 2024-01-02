@@ -233,3 +233,58 @@ function logText<T>(text: T): T {
   return text;
 }
 ```
+
+<br/>
+
+## 퀴즈
+
+### 1. 함수 제네릭 선언
+
+아래의 함수 mergeArrays는 두 개의 배열을 합치고, 중복된 요소를 제거하여 반환하는 함수입니다.
+함수에 제네릭을 적절히 선언하고, 함수를 호출하세요.
+
+```typescript
+function mergeArrays(arr1, arr2) {
+  const merged = [...arr1, ...arr2];
+  return Array.from(new Set(merged));
+}
+```
+
+#### 정답
+
+```typescript
+function mergeArrays<T>(arr1: T[], arr2: T[]): T[] {
+  const merged = [...arr1, ...arr2];
+  return Array.from(new Set(merged));
+}
+
+mergeArrays<string>(["hello", "world"], ["bye", "world"]);
+mergeArrays<number>([1, 2, 3], [3, 4, 5]);
+```
+
+### 2. 제네릭 타입 제약
+
+다음은 특정 유형의 객체에서 지정된 프로퍼티를 가져와 반환하는 함수입니다. 하지만 모든 객체가 모든 프로퍼티를 갖고 있는 것은 아닙니다. keyof와 extends를 사용하여 이 함수에 올바른 타입 제약을 추가하세요.
+
+```typescript
+function getProperty(obj: any, key: string): any {
+  return obj[key];
+}
+```
+
+#### 정답
+
+obj가 K 키를 가져야 하며, key의 타입은 K로 제한한다. 이를 통해 프로퍼티가 존재하지 않을 경우 컴파일 에러가 발생하도록 올바른 타입 제약을 설정할 수 있다.
+
+`Record<K, any>`는 'T는 K라는 키를 가진 객체여야 한다'는 의미의 TypeScript의 표준 라이브러리에서 제공되는 유틸리티 타입이다.
+
+```typescript
+function getProperty<T extends Record<K, any>, K extends keyof T>(
+  obj: T,
+  key: K
+): T[K] {
+  return obj[key];
+}
+
+getProperty({ name: "ryu", age: 20 }, "name"); // ryu
+```
