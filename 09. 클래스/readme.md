@@ -338,3 +338,172 @@ console.log(`Cat's color: ${cat.catColor}`);
 cat.catColor = "Black";
 console.log(`Cat's new color: ${cat.catColor}`);
 ```
+
+<br>
+<br>
+
+# 번외 : 우리가 잘못 알고 있는 클래스의 this, super의 동작 원리
+
+#### ❖ Typescript와는 무관한 내용이지만 Class를 배운 김에 같이 알고 가면 좋을 거 같아서 넣어보았습니다.
+
+<br>
+
+우리는 흔히 this는 자기 참조, super는 부모 참조라는 간단한 공식으로 그 동작 원리를 쉽게 추론하고 있다.
+이 장을 통해 동작 원리에 대해 배워보자
+
+## 1. this의 동작 원리
+
+다음 코드 예시를 보자
+
+```typescript
+class Person {
+  age: number;
+  name: string;
+  constructor(age: number, name: string) {
+    this.age = age;
+    this.name = name;
+  }
+  getGoal(): string {
+    return "끝까지 생존하며 자신과 똑같은 형질의 개체를 후손으로 남기는 것";
+  }
+
+  introduce(): string {
+    return `안녕하세요. 저는 ${this.name}입니다. ${
+      this.age
+    }살이며 ${this.getGoal()}라는 목표를 가지고 있습니다.`;
+  }
+}
+
+class Developer extends Person {
+  skill: string;
+  constructor(age: number, name: string, skill: string) {
+    super(age, name);
+    this.skill = skill;
+  }
+  getGoal(): string {
+    return "질좋은 소프트웨어를 만들어 사람들의 시간을 단축시키고 질을 높이는 것";
+  }
+}
+```
+
+클래스 Developer는 Person을 상속받고 있는 일반적인 코드이다.<br>
+만약에 이렇게 Developer 객체를 만들어 `introduce` 메소드를 사용하면 어떻게 될까?
+`introduce` 메소드를 사용하면 어떤 클래스의 `getGoal` 가 호출될까?
+
+```typescript
+const me = new Developer(27, "ABlue", "JavaScript");
+console.log(me.introduce()); // ?
+```
+
+결과는 `Developer`의 `getGoal`이 출력된다.
+
+```typescript
+[LOG]: "안녕하세요. 저는 ABlue입니다. 27살이며 질좋은 소프트웨어를 만들어 사람들의 시간을 단축시키고 질을 높이는 것라는 목표를 가지고 있습니다."
+```
+
+this는 자기 참조라는 표현때문에 this.getGoal는 바로 자기 자신 클래스의 getGoal을 참조할 것이라고 오해하기 쉽다.
+class 내에서의 this는 현재 클래스의 메서드를 호출하는 것이 아니라 그 메서드를 호출한 객체의 메서드를 호출한다 생각하면 이해하기 쉽다.
+다음 그림을 보고 이해해보자.
+
+<img src='https://github.com/Typescript-NRstudy/typescript-learning/assets/53801395/b8c9a1af-9061-4d56-a02a-17a11b4222a8' width='500' height='400'>
+
+### 1,2 introduce 메서드 탐색
+
+me는 Developer의 인스턴스이다.
+me의 introduce 메소드를 호출하면 this 참조는 Developer의 인스턴스를 가리키도록 설정되어 있다.
+메서드 탐색은 Developer 클래스에서부터 시작된다. Developer 클래스에는 introduce 메서드가 없기 때문에
+부모 클래스인 Person에서 메서드 탐색을 계속한다.
+다행히도 Person에 introduce 메서드를 발견하고 이를 실행한다.
+
+### 3,4,5 getGoal 메서드 탐색
+
+Person 클래스의 introduce 메서드를 실행하는 도중 this를 참조하는 객체에게 getGoal이라는 메서드를 호출하라는 구문과 마주치게 되는데
+메서드 탐색은 this 참조가 가리키는 객체에서 다시 시작된다.
+이 말은 즉, getGoal을 Person에서 찾지않고 introduce를 호출한 me(Developer)에서부터 찾는다는 뜻이다.
+따라서 메서드 탐색은 Person에서 벗어나 Developer에서 다시 시작된다.
+
+Developer의 getGoal 메서드가 있으니 이를 실행한 후 동적 메서드 탐색을 종료한다.
+그 결과 Person introduce 메서드와 Developer의 getGoal 메서드의 실행 결과를 조합한 문자열이 반환된다.
+
+this 참조는 자식 클래스에서 부모 클래스 방향으로 진행되는 동적 메서드 탐색 경로를 다시 this 참조가 가리키는 원래의 자식 클래스로 이동시킨다.
+
+this의 동작 원리와 함께 메서드 탐색 방법은 아래와 같다.
+
+    1. 메서드를 호출한 객체는 먼저 자신을 생헝한 클래스에 적합한 메서드가 존재하는지 검사한다. 존재하면 메서드를 실행하고
+    탐색을 종료한다.
+
+    2. 메서드를 찾지 못했다면 부모 클래스에서 메서드 탐색을 계속한다. 이 과정은 적합한 메서드를 찾을 때까지 상속 계층을 따라 올라가며 계속된다. 만일 이 때 this 참조자를 만났다면 다시 원래의 자식 클래스로 내려가 1번부터 반복하며 해당 메서드를 탐색한다.
+
+    3. 상속 계층의 가장 최상위 클래스에 이르렀지만 메서드를 발견하지 못한 경우 예외를 발생시키며 탐색을 중단한다.
+
+## 2. super의 원리
+
+super는 부모 클래스를 참조하는 것이라고 잘못 알고 있다.<br>
+완전히 잘못된 설명은 아니지만 완벽하다고도 볼 수 없다.<br>
+만일 부모 클래스를 참조하는 것이라면 다음 코드는 이해가 되지 않을 것이다.
+
+```typescript
+class Startup extends Developer {
+  constructor(age: number, name: string, skill: string) {
+    super(age, name, skill);
+  }
+
+  introduce(): string {
+    return super.introduce();
+  }
+
+  getGoals(): string {
+    return "자기가 일하는 회사를 만들어 사회에 기여하는 것";
+  }
+}
+
+const me = new Startup(27, "ABlue", "JavaScript");
+console.log(me.introduce()); // 실행이 될까요?
+```
+
+super가 부모 클래스의 메서드를 호출하는 것이라면 위 코드는 정상적으로 실행될 수 없을 것이다.<br>
+부모 클래스인 Developer에는 introduce 메서드가 정의되어 있지 않기 때문이다.
+
+하지만 위 코드는 정상적으로 실행되며 Person에 introduce의 메서드가 실행된다.
+
+```typescript
+[LOG]: "안녕하세요. 저는 ABlue입니다. 27살이며 자기가 일하는 회사를 만들어 사회에 기여하는 것라는 목표를 가지고 있습니다."
+```
+
+사실 super 참조의 용도는 부모 클래스를 가리키는 것이 아니라 `"지금 이 클래스의 부모 클래스에서부터 메서드 탐색을 시작하세요."` 다.<br>
+부모 클래스에서 원하는 메서드를 찾지 못했다면 더 상위의 부모 클래스로 이동하면서 메서드가 존재하는지 검사하는 것이다.<br>
+super 참조를 통해 실행하고자 하는 메서드가 반드시 부모 클래스에 위치하지 않아도 되는 유연성을 제공한다.<br>
+그 클래스의 조상 어딘가에 그 메서드가 정의되어 있기만 하면 실행된다는 것이다.
+다음 그림을 보고 이해해보자.
+
+<img src='https://github.com/Typescript-NRstudy/typescript-learning/assets/53801395/2f980f51-1bc3-470b-8de1-e587d70b8d6e' width='500' height='600'>
+
+### 1,2 super.introduce 메서드 탐색
+
+Startup 객체의 introduce 메서드를 호출하면 super.introduce 메서드를 호출하게 된다.
+super는 현재 클래스인(introduce를 호출한 객체가 아닌 것에 주의하자) Startup의 부모 클래스인
+Developer에서부터 introduce를 메서드를 탐색한다.
+
+### 3 introduce 메서드 탐색
+
+아쉽게도 Developer에는 introduce 메서드가 없다.
+그럼 한 단계 더 위의 부모 클래스인 Person에서 introduce를 탐색한다.
+Person 클래스에는 다행히도 introduce가 있으며 이를 실행한다.
+
+### 4 getGoal 메서드 탐색
+
+그림에는 없지만 Person의 introduce에는 this.getGoal() 메서드를 호출한다.
+여기서의 this는 Startup이므로 Startup부터 다시 getGoal 메서드를 탐색하면 된다.
+결과적으로 Startup의 getGoal 메서드가 호출된다.
+
+## 정리
+
+this 참조는 메시지를 수신하는 객체의 클래스에 따라 메서드를 탐색할 시작 위치를 `동적`으로 결정하는데 비해 super 참조는
+항상 메시지를 전송하는 클래스의 부모 클래스에서부터 시작되므로 `정적`즉 컴파일 시점에서 결정된다.
+앞의 예시를 보면 getGoal이라는 메서드를 호출했던 this 참조는 어떤 클래스에서 메서드 탐색이 시작될지 알지 못한다. Developer일수도 있고
+StartUp일수도 있고 미래의 추가될 새로운 자식 클래스일 수 있다.
+
+하지만 super는 다르다. super 참조는 항상 해당 클래스의 부모 클래스에서부터 메서드 탐색을 시작한다.
+this 참조를 통한 메서드 탐색을 시작하는 클래스는 미정이지만 super 참조를 통한 메서드 탐색은 컴파일 시점에서 미리 정해진다.
+따라서 this 참조인 경우 메서드 탐색을 시작할 크랠스를 반드시 런타임 시점에 동적으로 결정해야 하지만
+super 참조의 경우에는 컴파일 시점에 미리 결정할 수 있다.
