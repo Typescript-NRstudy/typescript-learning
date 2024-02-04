@@ -4,15 +4,6 @@
 
 <br/>
 
-## 목차
-
-- [타입 가드?](#타입-가드)
-- [필요성(타입 단언 vs 타입 가드)](#필요성-타입단언-vs-타입가드)
-- [타입 가드 구현 문법](#타입-가드-구현-문법)
-- [타입 가드 함수](#타입-가드-함수)
-
-<br/>
-
 ## 타입 가드?
 
 - 여러 개의 타입을 가지는 변수를 사용할 때, 해당 변수의 타입을 한정시키는 역할을 한다
@@ -243,3 +234,120 @@ function greet(someone: Hero | Person | Developer) {
   }
 }
 ```
+
+<br/>
+
+## 구별된 유니언 타입(Discriminated Union)
+
+유니언 타입을 구성하는 여러 개의 타입을 특정 속성의 유무가 아니라 `속성 문자열 타입 값으로 구분`할 수 있다. 이를 구별된 유니언 타입이라고 한다.
+
+아래 유니온 타입을 갖는 someone 변수는 어떻게 특정 타입으로 가드할 수 있을까? 두 타입의 속성의 이름은 모두 같기 때문에 in 연산자로 구분하긴 어렵다.
+
+```typescript
+interface Person {
+  name: string;
+  industry: "common";
+}
+
+interface Developer {
+  name: string;
+  industry: "tech";
+}
+
+function introduce(someone: Person | Developer) {
+  // ...?
+}
+```
+
+이때 두 타입에 모두 존재하면서 `값으로 구분될 수 있는 속성`인 industry를 사용하여 타입을 구분할 수 있다.
+
+```typescript
+function introduce(someone: Person | Developer) {
+  if (someone.industry === "common") {
+    // ✅ someone의 타입이 Person으로 추론
+  }
+
+  if (someone.industry === "tech") {
+    // ✅ someone의 타입이 Developer으로 추론
+  }
+}
+```
+
+<br/>
+
+## 다양한 방법으로 타입 가드하기
+
+타입가드는 if문뿐만 아니라 switch문이나 비교/논리 연산자로도 적용할 수 있다.
+
+### switch 문을 사용한 타입 가드
+
+switch문을 사용하면 여러 타입을 가진 변수를 더 효율적으로 가드할 수 있다.
+
+```typescript
+function introduce(someone: Person | Developer | Teacher) {
+  switch (someone.industry) {
+    case "common":
+      // ✅ someone의 타입이 Teacher으로 추론
+      break;
+    case "tech":
+      // ✅ someone의 타입이 Developer으로 추론
+      break;
+    case "education":
+      // ✅ someone의 타입이 Teacher으로 추론
+      break;
+  }
+}
+```
+
+#### 주의사항
+
+단, switch문을 사용할 때는 `default문을 사용하여 모든 타입을 가드`할 수 있도록 해야 한다. case 조건 값에 해당하지 않으면 someone 파라미터가 never 타입으로 추론되어 에러가 발생할 수 있기 때문이다.
+
+```typescript
+function introduce(someone: Person | Developer | Teacher) {
+  switch (someone.industry) {
+    // ...
+
+    default:
+      // ✅ someone의 타입이 Person | Developer | Teacher 로 추론
+      break;
+  }
+}
+```
+
+<br/>
+
+### 비교/논리 연산자를 사용한 타입가드
+
+#### 타입이 null이 아님을 보장하는 방법
+
+다음은 if문을 활용하여 message가 null이 아님을 보장한 후, message의 타입을 string으로 보장하는 예시이다. `null 아님 보장 연산자(!)`, `논리 연산자`를 사용해도 타입 가드를 적용한 효과를 볼 수 있다.
+
+```typescript
+function sayHello(message: string | null) {
+  if (message === null) return; // message가 null일때 함수를 종료
+  console.log(message); // ✅ message의 타입이 string으로 추론
+}
+```
+
+- `null 아님 보장 연산자(!)` 사용
+
+  - !를 사용하여 message가 null이 아님을 보장하고, string 타입으로 추론하여 null 체크를 생략할 수 있다
+
+    ```typescript
+    function sayHello(message: string | null) {
+      if (message!.length >= 3) console.log(message);
+    }
+    ```
+
+- `논리 연산자` 사용
+
+  - && 연산자로 message가 null이 아님을 보장하고, string 타입으로 추론하여 null 체크를 생략할 수 있다
+
+    ```typescript
+    function sayHello(message: string | null) {
+      if (message && message.length >= 3) {
+        console.log(message);
+      }
+    }
+    ```
