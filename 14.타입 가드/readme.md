@@ -351,3 +351,44 @@ function sayHello(message: string | null) {
       }
     }
     ```
+
+<br>
+
+### 콜백함수 내에서의 타입가드
+
+Typescript는 콜백 함수 내에서 타입 가드를 했음에도 불구하고 여전히 유효하지 않습니다.
+
+```typescript
+// Example Setup
+declare var foo: { bar?: { baz: string } };
+function immediate(callback: () => void) {
+  callback();
+}
+
+// Type Guard
+if (foo.bar) {
+  console.log(foo.bar.baz); // ✅ foo.bar는 {baz: string}으로 추론
+  immediate(() => {
+    console.log(foo.bar.baz); // ⚠️ Error: 해당 객체는 'undefined'일 가능성이 있습니다.
+  });
+}
+```
+
+이럴 경우 타입 가드 안에서 로컬 변수를 선언하고 그 안에 값을 담아 타입 추론이 가능하게 만들면 된다.
+
+```typescript
+// Example Setup
+declare var foo: { bar?: { baz: string } };
+function immediate(callback: () => void) {
+  callback();
+}
+
+// Type Guard
+if (foo.bar) {
+  console.log(foo.bar.baz); // ✅ foo.bar는 {baz: string}으로 추론
+  const bar = foo.bar;
+  immediate(() => {
+    console.log(bar.baz); // ✅ foo.bar는 {baz: string}으로 추론
+  });
+}
+```
