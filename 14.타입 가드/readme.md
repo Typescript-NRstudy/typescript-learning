@@ -99,6 +99,16 @@ const updateInput(value: string | number | boolean) {
 }
 ```
 
+### ⛔️ 주의!! typeof 로는 null을 가드할 수 없다.
+
+```typescript
+typeof null === "object"; // true
+```
+
+ECMAScript에서 typeof null === 'null' 로 동작하기를 제안을 했지만 [거절당했다](https://web.archive.org/web/20160331031419/http://wiki.ecmascript.org:80/doku.php?id=harmony:typeof_null).
+
+<br>
+
 ### 2️⃣ `instanceof` 연산자를 사용한 타입 가드
 
 `instanceof` 연산자는 대상 객체의 프로토 타입 체인에 포함되어 있는지 여부를 판별한다. 이를 활용하여 타입 가드를 구현할 수 있다. 주로 `클래스 타입이 유니언 타입으로 묶여있을 때` 타입을 구분하기 위해 사용한다
@@ -170,6 +180,14 @@ function learnCource(material: OfflineLecture | OnlineLecture) {
   }
 }
 ```
+
+### ⛔️ 주의!! `in` 연산자는 프로토타입 체인에 의하여 접근할 수 잇는 속성에 대해서도 `true`을 반환한다.
+
+```typescript
+"toString" in {}; // true
+```
+
+그러므로 `in`을 사용하여 특정 타입을 걸러낼 때 해당 타입의 프로토체인에 걸려있는 모든 부모의 키도 살펴보아야 한다.
 
 <br/>
 
@@ -377,12 +395,6 @@ if (foo.bar) {
 이럴 경우 타입 가드 안에서 로컬 변수를 선언하고 그 안에 값을 담아 타입 추론이 가능하게 만들면 된다.
 
 ```typescript
-// Example Setup
-declare var foo: { bar?: { baz: string } };
-function immediate(callback: () => void) {
-  callback();
-}
-
 // Type Guard
 if (foo.bar) {
   console.log(foo.bar.baz); // ✅ foo.bar는 {baz: string}으로 추론
