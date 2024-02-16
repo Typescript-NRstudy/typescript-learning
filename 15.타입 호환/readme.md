@@ -31,6 +31,8 @@ num = str; // ⚠️ Error
 
 즉, string 타입이 'hi' 문자열 리터럴 타입보다 더 큰 범위를 가지고 있기 때문에 할당이 가능하다. ( `'hi' ⊂ string` )
 
+<img width='500px' alt='string 타입과 문자열 리터럴 타입의 포함관계를 나타내는 도식' src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/dca97938-e167-4d64-a93c-4b4122d99a96" />
+
 ```typescript
 let a: string = "hello";
 let b: "hi" = "hi";
@@ -140,11 +142,43 @@ developer = person; // ⚠️ Error
 
 ## 함수 타입 호환
 
-함수 타입도 구조적 타이핑 관점에서 매개변수 타입과 반환 타입을 비교하여 호환 여부를 판단한다.
+> 특정 함수 타입의 부분 집합에 해당하는 함수는 호환되지만, 더 크거나 타입을 만족하지 못하는 함수는 호환되지 않는다.
 
-### 매개변수 타입 호환
+아래 구조가 다른 두 함수를 선언했다.
+`sum` 함수는 두 개의 숫자를 받아서 숫자를 반환하고, `getNumber` 함수는 한개의 숫자를 받아서 숫자를 반환한다.
 
-### 반환 타입 호환
+```typescript
+let getNumber = function (num: number): number {
+  return num;
+};
+
+let sum = function (x: number, y: number): number {
+  return x + y;
+};
+
+sum = getNumber; // ?
+getNumber = sum; // ?
+```
+
+두 함수의 포함관계를 나타내는 도식은 다음과 같다. 타입 호환을 판단해보자.
+
+<img width='500px' alt='sum 함수와 getNumber 함수간의 호환 관계'  src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/503356fb-8f8c-4628-972b-e7f6d12ea4a4">
+
+### 호환되는 경우
+
+파라미터가 적은 함수를 파라미터가 많은 함수에 할당하면 타입에러가 발생하지 않는다. 함수의 역할이 더 많은 함수에 할당하는 것이기 때문이다.(getNumber 함수는 sum 함수의 부분 집합)
+
+```typescript
+sum = getNumber; // ✅
+```
+
+### 호환되지 않는 경우
+
+파라미터가 두개인 함수를 파라미터가 하나인 함수에 할당하면 타입에러가 발생한다. 함수의 역할이 달라지기 때문이다. (sum 함수는 getNumber 함수의 부분 집합이 아니다)
+
+```typescript
+getNumber = sum; // ⚠️ Error : Type '(x: number, y: number) => number' is not assignable to type '(num: number) => number'.
+```
 
 <br/>
 
