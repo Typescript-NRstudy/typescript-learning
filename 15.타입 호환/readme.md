@@ -290,6 +290,115 @@ interface Product {
 }
 ```
 
+<br>
+
+## 신선도 (Freshness)
+
+TypeScript는 구조적 서브타이핑에 기반한 타입 호환의 예외 조건과 관련하여 신선도 (Freshness) 라는 개념을 제공한다. 모든 object literal은 초기에 “fresh” 하다고 간주되며, 타입 단언 (type assertion) 을 하거나, 타입 추론에 의해 object literal의 타입이 확장되면 “freshness”가 사라지게 된다. 특정한 변수에 object literal을 할당하는 경우 이 2가지 중 한가지가 발생하게 되므로 “freshness”가 사라지게 되며, 함수에 인자로 object literal을 바로 전달하는 경우에는 “fresh”한 상태로 전달된다.
+
+```typescript
+interface Person {
+  name: string;
+}
+
+interface Developer {
+  name: string;
+  skill: string;
+}
+
+function getPersonName(person: Person) {
+  return getPersonName.name;
+}
+
+const developer: Developer = {
+  //fresh 하지 않은 상태
+  name: "na",
+  skill: "front-end",
+};
+
+getPersonName(developer); // ✅
+getPersonName({
+  name: "na",
+  skill: "front-end", // ⚠️ Error : Object literal may only specify known properties, and 'skill' does not exist in type 'Person'.(2353)
+});
+```
+
+위 코드는 타입스크립트 타입 추론에 의해 fresh가 사라진 developer 객체와 fresh한 상태인 object literal로 직접 getPersonName 함수의 인수로 전달된 코드를 나타낸다. 타입 체크 결과는 developer 객체로 보냈을 경우에는 타입 체크에 문제가 없지만 object literal 보냈을 경우에는 Person 타입에는 skill 속성이 없다는 오류가 나타난다.
+
+이와 같은 경우가 생겨난 이유는 타입스크립트에 내장된 타입 체커 시스템에서 알 수 있다.
+
+[typescript/src/compiler/checker.ts](https://github.com/microsoft/TypeScript/blob/main/src/compiler/checker.ts)에서 (이해를 편하게 하기 위해 코드가 다소 간소화되었음)
+
+```typescript
+/** 함수 매개변수에 전달된 값이 FreshLiteral인 경우 true가 된다. */
+const isPerformingExcessPropertyChecks =
+  getObjectFlags(source) & ObjectFlags.FreshLiteral;
+
+if (isPerformingExcessPropertyChecks) {
+  /** 이 경우 아래 로직이 실행되는데,
+   * hasExcessProperties() 함수는
+   * excess property(타입에 명시되어있지 않은 다른 속성들)가 있는 경우 에러를 반환하게 된다.
+   * 즉, property가 정확히 일치하는 경우만 허용하는 것으로
+   * 타입 호환을 허용하지 않는 것과 같은 의미입니다. */
+  if (hasExcessProperties(source as FreshObjectLiteralType)) {
+    reportError();
+  }
+}
+/**
+ * FreshLiteral이 아닌 경우 위 분기를 skip하게 되며,
+ * 타입 호환을 허용하게 된다. */
+```
+
+그러므로 `FreshLiteral`일 경우에는 타입스크립트가 구조적 타이핑을 따르지 않고 예외적으로 오류를 표시하게 된다.
+
+### 왜 objectLiteral만 예외적으로 오류를 표시할까?
+
+다음과 같은 부작용이 있기 때문에 일부러 오류를 표시를 하게 만들었다.
+아래의 예시처럼 만약 objectLiteral도 구조적 타이핑을 적용시키면 어떤 일들이 발생하는지 확인해보자.
+
+```typescript
+/** 부작용 1
+ * 코드를 읽는 다른 개발자가 getPersonName 함수가
+ * skill을 사용한다고 오해할 수 있음 */
+getPersonName({
+  name: "na",
+  skill: "front-end",
+});
+
+/** 부작용 2
+ * skiil 이라는 오타가 발생하더라도
+ * excess property이기 때문에 호환에 의해 오류가
+ * 발견되지 않음 */
+getPersonName({
+  name: "na",
+  skiil: "front-end",
+});
+```
+
+fresh object를 함수에 인자로 전달한 경우, 이는 특정한 변수에 할당되지 않았으므로 어차피 해당 함수에서만 사용되고 다른 곳에서 사용되지 않습니다. 이 경우 유연함에 대한 이점보다는 부작용을 발생시킬 가능성이 높으므로 굳이 구조적 타이핑을 지원해야할 이유가 없다.
+
+그러므로 objectLiteral을 함수의 인수에 그대로 전달되었을 경우 구조적 타이핑이 적용되지 않으니 이 점 유의해두자.
+
+### objectLiteral도 구조적 타이핑을 적용시킬 수는 없을까?
+
+#### 1. index signature 적용
+
+```typescript
+interface Person {
+  name: string;
+  [excessProperties: string]: any;
+}
+
+getPersonName({
+  name: "na",
+  skill: "front-end", // ✅
+});
+```
+
+#### 2. tsconfig에 [`suppressExcessPropertyErrors`](https://www.typescriptlang.org/tsconfig/#suppressExcessPropertyErrors) rule 추가
+
+<br>
+
 ## 정리
 
 ### 1. 객체 타입 호환
