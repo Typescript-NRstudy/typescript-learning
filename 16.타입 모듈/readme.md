@@ -140,3 +140,112 @@ import * as math from "./math.js"; // math 네임스페이스로 가져옴
 console.log(math.sum(1, 2)); // 3
 console.log(math.multiply(1, 2)); // 2
 ```
+
+<br/>
+
+## 타입스크립트 모듈
+
+타입스크립트는 자바스크립트의 모듈화 문법을 그대로 사용하면서, 타입을 내보내고 가져올 수 있다.
+
+### 모듈 유효범위(스코프)
+
+타입스크립트 프로젝트 내에서는 어느 파일에서 변수나 타입을 선언하든 전역 변수로 간주하기 때문에 같은 프로젝트 내에서는 이미 선언된 이름을 재사용할 수 없다. (전역 스코프)
+
+```typescript
+// utils.ts
+type Developer { // ⚠️ Error: Duplicate identifier 'Developer'.
+  name: string;
+}
+
+// app.ts
+var ryu: Developer = {
+  name: "Ryu",
+};
+
+type Developer { // ⚠️ Error: Duplicate identifier 'Developer'.
+  name: string;
+  skill: string;
+}
+```
+
+다만, 전역 스코프로 정의된다 하더라도 `var` 이나 `interface` 등 `재선언이나 병합이 가능한 코드`는 별도로 에러가 발생하지 않는다.
+
+```typescript
+// utils.ts
+interface Developer {
+  name: string;
+}
+
+// app.ts
+// ✅ utils.ts의 Person 인터페이스와 app.ts의 Developer 인터페이스가 병합되어 name, skill 속성을 모두 정의해야 한다
+var ryu: Developer = {
+  name: "Ryu",
+  skill: "typescript",
+};
+
+interface Developer {
+  name: string;
+  skill: string;
+}
+```
+
+<br/>
+
+### TS 모듈화 문법
+
+타입스크립트 프로젝트에서 타입 코드를 모듈로 내보내고 불러올때 사용하는 두가지 문법을 알아보자.
+
+#### 1️⃣ `import type`
+
+타입을 가져올 때도 자바스크립트와 동일하게 import 구문을 사용한다.
+
+다만, 타입을 다른 파일에서 가져올 때는 `type` 키워드를 추가로 사용하여 `타입 코드인지 아닌지 명시`할 수 있다.
+
+```typescript
+import type { Developer } from "./utils";
+```
+
+> `import` vs `import type` 중 어떤 것을 사용할까? <br/>
+>
+> 규칙을 정하고 일관적으로 작성하면된다.
+> 다만 코드의 자동완성을 통해 타입을 가져오는 경우 `import`문에 `type` 키워드가 붙지 않기 때문에,
+> 자동완성이 주는 편리함을 따라가고 싶다면 `import`를 사용하는 것이 좋다.
+> 코드의 역할을 더 명확하게 하고 싶다면 `import type`을 사용하는 것을 권장한다.
+
+#### 2️⃣ `import inline type`
+
+변수, 함수 등 실제 값으로 사용되는 코드와 타입을 함께 가져올 때 사용하는 문법이다.
+
+한 파일에서 import로 여러 종류의 코드를 가져올 때 `어떤 모듈이 타입인지 명시`할 수 있다.
+
+```typescript
+import { type Product, initialValue } from "./Product";
+```
+
+<br/>
+
+### 모듈화 전략 : `배럴(Barrel)`
+
+배럴 모듈화 패턴은 `여러 파일을 하나의 통으로 내보내는 기법`이다.
+
+비슷한 타입을 한곳에 모아서 내보내면, 여러 파일을 불러오는 번거로움을 줄이고 가독성을 높일 수 있다.
+
+다음은 3개의 타입을 각각의 파일로 분리하여 배럴 패턴을 적용한 예시이다.
+
+- 파일 3개 모듈을 한곳에 모아주는 `index.ts` 중간파일을 생성한다.
+
+  ```typescript
+  // 🗂️ ./types/index.ts
+  import  * from "./product";
+  import  * from "./user";
+  import  * from "./order";
+
+  export { Product, User, Order };
+  ```
+
+- `index.ts` 파일을 통해 모듈을 내보내면, 모듈들을 간결하게 불러올 수 있다.
+
+  ```typescript
+  // 🗂️ app.ts
+  import { Product, Order, User } from "./types";
+  ```
