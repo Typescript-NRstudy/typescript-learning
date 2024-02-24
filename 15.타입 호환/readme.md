@@ -20,7 +20,7 @@
 let num: number = 1;
 let str: string = "hello";
 
-num = str; // ⚠️ Error
+num = str; // ❌ Error
 ```
 
 > 타입스크립트에서는 타입 호환을 엄격하게 판단한다. 자바스크립트처럼 런타임에 타입 캐스팅(type casting)이 이루어지지 않기 때문이다.
@@ -38,7 +38,7 @@ let a: string = "hello";
 let b: "hi" = "hi";
 
 a = b; // ✅
-b = a; // ⚠️ Error : 'hi' 타입은 'hi'만 할당 가능
+b = a; // ❌ Error : 'hi' 타입은 'hi'만 할당 가능
 ```
 
 <br/>
@@ -95,7 +95,7 @@ let person: Person = { name: "ryu" };
 let developer: Developer = { name: "na", skill: "typescript" };
 
 person = developer; // ✅
-developer = person; // ⚠️ Error : Property 'skill' is missing in type 'Person' but required in type 'Developer'
+developer = person; // ❌ Error : Property 'skill' is missing in type 'Person' but required in type 'Developer'
 ```
 
 ### 두 타입 간 동일한 타입을 가진 속성이 1개 이상인 경우
@@ -111,7 +111,7 @@ person = developer; // ✅
 ### 호환을 위한 최소 조건을 만족하지 못하는 경우
 
 ```typescript
-developer = person; // ⚠️ Error
+developer = person; // ❌ Error
 ```
 
 `Person` 타입은 `Developer` 타입과 호환 불가능하다.
@@ -184,7 +184,7 @@ sum = getNumber; // ✅
 파라미터가 두개인 함수를 파라미터가 하나인 함수에 할당하면 타입에러가 발생한다. 함수의 역할이 달라지기 때문이다. (sum 함수는 getNumber 함수의 부분 집합이 아니다)
 
 ```typescript
-getNumber = sum; // ⚠️ Error : Type '(x: number, y: number) => number' is not assignable to type '(num: number) => number'.
+getNumber = sum; // ❌ Error : Type '(x: number, y: number) => number' is not assignable to type '(num: number) => number'.
 ```
 
 <br/>
@@ -226,7 +226,7 @@ enum Framework {
 }
 
 let spa: SPA = SPA.React;
-spa = Framework.React; // ⚠️ Error : Type 'Framework.React' is not assignable to type 'SPA'.
+spa = Framework.React; // ❌ Error : Type 'Framework.React' is not assignable to type 'SPA'.
 ```
 
 <br/>
@@ -270,8 +270,8 @@ interface Product<T> {
 let product1: Product<string> = { id: "prd1", name: "cup", price: 1000 };
 let product2: Product<number> = { id: 1, name: "plate", price: 2000 };
 
-product1 = product2; // ⚠️ Error : Type 'Product<number>' is not assignable to type 'Product<string>'.
-product2 = product1; // ⚠️ Error
+product1 = product2; // ❌ Error : Type 'Product<number>' is not assignable to type 'Product<string>'.
+product2 = product1; // ❌ Error
 ```
 
 ```typescript
@@ -319,7 +319,7 @@ const developer: Developer = {
 getPersonName(developer); // ✅
 getPersonName({
   name: "na",
-  skill: "front-end", // ⚠️ Error : Object literal may only specify known properties, and 'skill' does not exist in type 'Person'.(2353)
+  skill: "front-end", // ❌ Error : Object literal may only specify known properties, and 'skill' does not exist in type 'Person'.(2353)
 });
 ```
 

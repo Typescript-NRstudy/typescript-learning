@@ -29,7 +29,7 @@
 
 ```typescript
 const updateInput(value: string | number | boolean) {
-    value.length; // ⚠️ Error : value는 string, number, boolean 타입에서 모두 사용할 수 있는 속성과 API만 접근해야 한다
+    value.length; // ❌ Error : value는 string, number, boolean 타입에서 모두 사용할 수 있는 속성과 API만 접근해야 한다
 }
 ```
 
@@ -48,7 +48,7 @@ const updateInput(value: string | number | boolean) {
   ```typescript
   const updateInput(value: string | number | boolean) {
       console.log((value as string).length); // ✅
-      console.log((value as number).length); // ⚠️ Error : length는 string 타입에서 사용할 수 있는 API
+      console.log((value as number).length); // ❌ Error : length는 string 타입에서 사용할 수 있는 API
   }
   ```
 
@@ -154,7 +154,7 @@ interface OnlineLecture {
 }
 
 function learnCource(material: OfflineLecture | OnlineLecture) {
-  material.url; // ⚠️ Error : OfflineLecture와 OnlineLecture의 공통 속성이 아니므로 에러가 발생한다
+  material.url; // ❌ Error : OfflineLecture와 OnlineLecture의 공통 속성이 아니므로 에러가 발생한다
 
   if ("place" in material) {
     // ✅ 이 블록 내에서는 material의 타입이 OfflineLecture으로 추론된다
@@ -175,7 +175,7 @@ function learnCource(material: OfflineLecture | OnlineLecture) {
 ```typescript
 function learnCource(material: OfflineLecture | OnlineLecture) {
   if ("name" in material) {
-    // ⚠️ 타입 가드로 구분할 수 없는 경우
+    // ❌ 타입 가드로 구분할 수 없는 경우
     // 이 블록 내에서는 material의 타입이 OfflineLecture | OnlineLecture로 추론된다
   }
 }
@@ -228,7 +228,7 @@ Person 타입이 그나마 유일하게 갖는 속성은 age이다. 하지만, D
 ```typescript
 function greet(someone: Hero | Person | Developer) {
   if ("age" in someone) {
-    // ⚠️ 이 블록 내에서는 someone의 타입이 Person | Developer 로 추론된다
+    // ❌ 이 블록 내에서는 someone의 타입이 Person | Developer 로 추론된다
     console.log(someone.age);
   }
 }
@@ -387,7 +387,7 @@ function immediate(callback: () => void) {
 if (foo.bar) {
   console.log(foo.bar.baz); // ✅ foo.bar는 {baz: string}으로 추론
   immediate(() => {
-    console.log(foo.bar.baz); // ⚠️ Error: 해당 객체는 'undefined'일 가능성이 있습니다.
+    console.log(foo.bar.baz); // ❌ Error: 해당 객체는 'undefined'일 가능성이 있습니다.
   });
 }
 ```

@@ -72,8 +72,6 @@ require(["https://unpkg.com/vue@3/dist/vue.global.js"], function (Vue) {
 
 #### 1️⃣ `export` vs `export default` : 모듈 내보내기
 
-<!-- 리스트를 markdown 테이블로 바꿔줘 -->
-
 | 구분             | 설명                              |
 | ---------------- | --------------------------------- |
 | `export`         | `여러개`의 변수나 함수를 `모듈화` |
@@ -102,7 +100,7 @@ import ellipsis from "./formatString.js";
 ```
 
 > 일반적으로 파일의 맨 마지막 줄에 `export`로 내보낼 대상을 정의하는 것이 관례이다. 이는 다른 개발자가 코드를 읽을 때, 내보내는 대상을 쉽게 찾을 수 있도록 하기 위함이다.<br/>
-> 내보낼 대상에 `export`를 일일이 붙여주어도 무방지만, 무엇이든 두가지 방식 중 한가지로 일관되게 코드를 작성하는 것이 좋다.
+> 내보낼 대상에 `export`를 일일이 붙여주어도 무방하지만, 무엇이든 두가지 방식 중 한가지로 일관되게 코드를 작성하는 것이 좋다.
 
 #### 2️⃣ `import as` : 별칭 사용
 
@@ -153,7 +151,7 @@ console.log(math.multiply(1, 2)); // 2
 
 ```typescript
 // utils.ts
-type Developer { // ⚠️ Error: Duplicate identifier 'Developer'.
+type Developer { // ❌ Error: Duplicate identifier 'Developer'.
   name: string;
 }
 
@@ -162,7 +160,7 @@ var ryu: Developer = {
   name: "Ryu",
 };
 
-type Developer { // ⚠️ Error: Duplicate identifier 'Developer'.
+type Developer { // ❌ Error: Duplicate identifier 'Developer'.
   name: string;
   skill: string;
 }
