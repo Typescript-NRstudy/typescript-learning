@@ -25,7 +25,7 @@
 
 <br/>
 
-## Pick 유틸리티 타입
+## `Pick<TYPE, KEY>`
 
 기존 타입(대상 타입)에서 `몇 개의 속성을 추출`하여 새로운 타입을 정의할 때 사용한다.
 
@@ -73,7 +73,7 @@ const userProfile: UserProfile = {
 
 <br/>
 
-## Omit 유틸리티 타입
+## `Omit<TYPE, KEY>`
 
 기존 타입(대상 타입)에서 `몇 개의 속성을 제외`하고 나머지 속성으로 새로운 타입을 정의할 때 사용한다.
 
@@ -127,7 +127,7 @@ type User2 = Omit<UserProfile, "address">;
 
 <br/>
 
-## Partial 유틸리티 타입
+## `Partial<T>`
 
 기존 타입(대상 타입)의 `모든 속성을 옵셔널로 변경`하여 새로운 타입을 정의할 때 사용한다.
 
@@ -194,7 +194,7 @@ updateTodo({ id: "1", title: "유틸리티 타입 공부", checked: true });
 
 <br/>
 
-## Exclude 유틸리티 타입
+## `Exclude<TYPE1, TYPE2>`
 
 `유니언 타입`을 구성하는 `특정 타입을 제외`할 때 사용한다.
 
@@ -228,7 +228,7 @@ type NotAnimalOrPlant = Exclude<Categoies, "animal" | "plant">;
 
 <br/>
 
-## Record 유틸리티 타입
+## `Record<KEY, TYPE>`
 
 객체 타입의 `속성을 다른 타입으로 변환`할 때 사용한다.
 
@@ -280,7 +280,7 @@ const dev: Developers = {
 
 ### 활용2
 
-`Record` 타입으로 `인덱스 시그니처를 정의`할 수도 있다.
+`Record` 타입으로 `인덱스 시그니처를 ㅇ정의`할 수도 있다.
 
 ```typescript
 type PhoneBook = Record<string, string>;
@@ -292,3 +292,101 @@ const familyPhoneBook: PhoneBook = {
 ```
 
 <img width="189" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/46aec8bf-0896-4911-a5d9-1e9fd4a26f69">
+
+<br>
+
+## `ReturnType<TYPE>`
+
+함수를 제네릭 TYPE으로 받아, 반환값의 타입을 반환한다.
+
+### 문법
+
+```typescript
+type NewType = ReturnType<
+  typeof "함수"
+>;
+```
+
+### 활용
+
+React hooks의 인터페이스를 컴포넌트에서 받게 될 때 사용되면 편리하다.
+나중의 hooks의 인터페이스가 달라져도 사용하는 코드 쪽의 수정을 최소화할 수 있기 때문이다.
+
+```typescript
+type UsePersonInfo = ReturnType<typeof usePersonInfo>;
+
+function usePersonInfo() {
+  return {
+    age: 28,
+    name: "Na",
+  };
+}
+
+const personInfo = usePersonInfo();
+
+fn({ ...personInfo });
+
+function fn(personInfo: UsePersonInfo) {}
+```
+
+<br>
+
+## `Readonly<TYPE>`
+
+TYPE의 모든 속성을 읽기 전용(readonly)으로 변경한 새로운 타입을 반환한다.
+
+### 문법
+
+```typescript
+type NewType = Readonly<
+  typeof "함수"
+>;
+```
+
+### 활용
+
+한 번 생성된 인스턴스는 함부로 바꿀 수 없게 만들려고 할 때 활용되어진다.
+
+```typescript
+class User {
+  readonly id: string;
+  readonly name: string;
+  readonly age: string;
+  constructor(dto: UserDTO) {
+    this.id = dto.id;
+    this.name = dto.name;
+    this.age = dto.age;
+  }
+}
+```
+
+<br>
+
+## `Required<TYPE>`
+
+TYPE의 모든 속성을 옵셔널에서 필수(required)로 변경한 새로운 타입을 반환한다.
+
+### 문법
+
+```typescript
+type NewType = Required<"타입 및 인터페이스">;
+```
+
+### 활용
+
+```typescript
+interface User {
+  id: number;
+  name: string;
+  hobby?: string;
+}
+
+type RequiredUser = Required<User>;
+
+const user: RequiredUser = {
+  // ❌ Error: Property 'hobby' is missing in type '{ id: number; name: string; }' but required in type 'Required<User>'.
+  id: 1,
+  name: "ryu",
+  // hobby property도 명시해야 한다.
+};
+```
