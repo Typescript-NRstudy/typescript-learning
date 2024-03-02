@@ -125,6 +125,32 @@ type User2 = Omit<UserProfile, "address">;
 
 컨벤션마다 어떤 유틸리티 타입을 사용할지는 다를 수 있지만, 가급적이면 `코드를 줄이는 방향으로 유틸리티 타입을 정해서 사용`하는 것이 좋다. (Omit을 사용하는 것이 코드를 줄이는 방향에서 유리하다)
 
+### ❗️ Omit을 사용할 때 주의점
+
+omit은 사이드 이펙트가 존재할 수 있다.
+
+```typescript
+interface UserInfo {
+  id: number;
+  name: string;
+  address: string;
+}
+
+type UserPublicInfo = Omit<UserInfo, "address">;
+```
+
+만약 UserInfo에 소득인 `income` 속성이 추가된다면 UserPublicInfo에도 그 `income` 속성이 추가되는 참사가 생길 수 있다.
+
+```typescript
+interface UserInfo {
+  income: number;
+}
+
+type UserPublicInfo = Omit<UserInfo, "address">;
+```
+
+<img width="176" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/53801395/57ae19b6-5b4e-436a-bb62-1bcb3bff864f">
+
 <br/>
 
 ## `Partial<T>`
@@ -230,7 +256,7 @@ type NotAnimalOrPlant = Exclude<Categoies, "animal" | "plant">;
 
 ## `Record<KEY, TYPE>`
 
-객체 타입의 `속성을 다른 타입으로 변환`할 때 사용한다.
+속성 키가 Keys이고 속성 값이 Type인 객체 유형을 생성합니다. 이 유틸리티는 한 유형의 속성을 다른 유형에 매핑하는 데 사용할 수 있습니다.
 
 타입 한개를 속성의 키로, 다른 타입을 속성의 값으로 받아 새로운 타입을 정의한다.
 
