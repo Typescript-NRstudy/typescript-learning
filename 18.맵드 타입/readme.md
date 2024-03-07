@@ -128,3 +128,58 @@ const ryu: RequiredDeveloper<Developer> = {
   skill: "typescript",
 };
 ```
+
+<br/>
+
+## 유틸리티 타입 직접 만들어보기
+
+타입스크립트에서 제공하는 유틸리티 타입을 직접 만들어보자.
+
+### Partial
+
+```typescript
+type myPartial<T> = {
+  [P in keyof T]?: T[P];
+};
+```
+
+### Pick
+
+```typescript
+type myPick<T, K extends keyof T> = {
+  [P in K]: T[P];
+};
+```
+
+### Omit
+
+대상 객체의 속성을 순회하며 K가 아닌 속성들만 새로운 타입으로 만들어 반환한다.
+
+```typescript
+type myOmit<T, K extends keyof T> = {
+  // K는 제외할 속성의 키
+  [P in Exclude<keyof T, K>]: T[P];
+};
+```
+
+### Exclude
+
+```typescript
+type myExclude<T, U> = T extends U ? never : T; // U는 T에서 제외할 타입
+```
+
+### Required
+
+```typescript
+type myRequired<T> = {
+  [P in keyof T]-?: T[P];
+};
+```
+
+### Record
+
+```typescript
+type myRecord<K extends string, T> = {
+  [P in K]: T;
+};
+```
