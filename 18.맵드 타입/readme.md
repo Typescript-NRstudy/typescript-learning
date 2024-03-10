@@ -16,13 +16,28 @@
 
 #### 인덱스 시그니처 문법 안에서 사용하는 in 앞의 타입 이름은 개발자 마음대로 지을 수 있다
 
-- `in` 앞에 오는 타입 변수는 순회할 타입 변수이므로 개발자 마음대로 지을 수 있지만, 최대한 역할을 나타낼 수 있는 이름을 사용하는 것이 좋다.
+- `in` 앞에 오는 타입 변수는 순회할 타입 변수이므로 개발자 마음대로 지을 수 있지만, 최대한 의미를 나타낼 수 있는 이름을 사용하는 것이 좋다.
+
+```typescript
+type developers = "na" | "ryu";
+type studyAttendance = {
+  [dev in developers]: boolean; // in 앞에 dev는 개발자가 다른 의미있는 이름으로 명시할 수 있다.
+};
+```
 
 #### 맵드 타입의 대상 타입 유형
 
 - 맵드 타입의 대상 타입으로 `문자열`, `문자열 유니온 타입`, `인터페이스`, `타입별칭` 등 여러가지 타입을 변환하여 사용할 수 있다.
 
-- 단, `boolean` 타입은 속성 이름(key)으로 사용할 수 없기 때문에 사용할 수 없다. (타입에러 발생)
+- 단, `boolean` 타입은 속성 이름(key)으로 사용할 수 없기 때문에 사용할 수 없으며,  
+  key에는 `string`, `number` 그리고 ES6에 새롭게 등장한 다른 값과 중복되지 않는 유일무이의 값 `symbol`이다.
+
+```typescript
+type TrueAndFalse = true | false;
+type TrueAndFalseMap = {
+  [Boolean in TrueAndFalse]: boolean; // ❌ Error: Type 'boolean' is not assignable to type 'string | number | symbol'.
+};
+```
 
 <br/>
 
@@ -42,6 +57,7 @@
 type developers = "na" | "ryu";
 type studyAttendance = {
   [dev in developers]: boolean; // ✅ 문자열 유니온 타입의 각각의 속성에 대해 boolean 타입을 지정
+};
 ```
 
 결과 타입은 다음과 같다.
@@ -124,8 +140,7 @@ type RequiredDeveloper<T> = {
 };
 
 const ryu: RequiredDeveloper<Developer> = {
-  name: "ryu",
-  skill: "typescript",
+  name: "ryu", // ❌ Error: Property 'skill' is missing in type '{ name: string; }' but required in type 'RequiredDeveloper<Developer>'.
 };
 ```
 
@@ -134,6 +149,15 @@ const ryu: RequiredDeveloper<Developer> = {
 ## 유틸리티 타입 직접 만들어보기
 
 타입스크립트에서 제공하는 유틸리티 타입을 직접 만들어보자.
+
+### 만들기 전에 앞서서 알아야 할 것들
+
+```typescript
+T extends U ? X : Y
+```
+
+자바스크립트처럼 타입스크립트도 `?`를 사용하여 조건부 형식으로 타입을 정의할 수 있다.
+조건식 결과에 따라 X가 될 수도, Y가 될 수도 있다.
 
 ### Partial
 
@@ -167,6 +191,9 @@ type myOmit<T, K extends keyof T> = {
 ```typescript
 type myExclude<T, U> = T extends U ? never : T; // U는 T에서 제외할 타입
 ```
+
+위에 있는 Exclude는 U가 T 안에 있으면 never로 선언하며 그렇지 않으면 그대로 T를 반환한다.  
+즉 T에 오는 타입들 중 U에 오는 것들은 제외하겠다는 의미이다.
 
 ### Required
 
