@@ -210,3 +210,58 @@ type myRecord<K extends string, T> = {
   [P in K]: T;
 };
 ```
+
+<br/>
+
+## Key Remapping via `as`
+
+TypeScript 4.1 이상에서는 매핑된 타입에 as 절을 사용해서 매핑된 타입의 키를 다시 매핑할 수 있다.
+
+```typescript
+type ReMappedTypeWithNewProperties<Type> = {
+  [Properties in keyof Type as NewKeyType]: Type[Properties];
+};
+```
+
+```typescript
+type Getters<Type> = {
+  [Property in keyof Type as `get${Capitalize<
+    string & Property
+  >}`]: () => Type[Property];
+  // 'Capitalize' 은 키 앞글자를 대문자로 바꿔주는 타입이다.
+};
+
+interface Person {
+  name: string;
+  age: number;
+  skill: string;
+}
+
+type PersonGetter = Getters<Person>;
+// type PersonGetter = {
+//     getName: () => string;
+//     getAge: () => number;
+//     getLocation: () => string;
+// }
+```
+
+조건부 타입을 통해 `never`를 생성해서 키를 필터링할 수 있습니다.
+
+```typescript
+// 'income' 프로퍼티를 Exclude로 제거한다
+type RemovePrivateField<Type> = {
+  [Property in keyof Type as Exclude<Property, "income">]: Type[Property];
+};
+
+interface EmployeeInfo {
+  name: string;
+  age: number;
+  income: number;
+}
+
+type EmployeePublicInfo = RemovePrivateField<EmployeeInfo>;
+// type EmployeePublicInfo = {
+//     name: string;
+//     age: number;
+// }
+```
