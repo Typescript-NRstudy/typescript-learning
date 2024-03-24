@@ -265,3 +265,51 @@ type EmployeePublicInfo = RemovePrivateField<EmployeeInfo>;
 //     age: number;
 // }
 ```
+
+## 퀴즈
+
+학교 게시판의 반 인원의 성적표를 공개하고자 한다. 하지만 성적은 개인의 민감한 정보이니
+대놓고 이름과 성적을 매칭시켜 공개하고 싶지 않다.
+다른 사람은 모르게 하면서 본인의 점수만 확인하게 할 수 있도록
+학번(id)와 성적을 매칭시켜 공개하고자 한다.
+
+다음은 학생정보 모델 `Student` 정보와 성적표에서 가려내고 싶은 `PrivateStudentInfo` 타입,
+그리고 성적표에 기입할 정보들을 갖고오게 하기 위한 `Solution` 타입이 있다.
+`Student`와 `PrivateStudentInfo`을 이용하여 `Solution` 타입을 변환해보자
+(`in`과 `as` 키워드를 이용해보자)
+
+```typescript
+type Grade = "A" | "B" | "C" | "D" | "F";
+interface Student {
+  id: string; // 학번
+  name: string;
+  key: string;
+  weight: string;
+  point: string;
+  grade: string;
+}
+
+type PrivateStudentInfo = keyof Omit<Student, "id" | "point" | "grade">;
+
+interface Solution {
+  getId?: () => string;
+  getPoint?: () => Grade;
+  getGrade?: () => string;
+}
+```
+
+⬇️ 답안
+
+```typescript
+type SolutionType<Type, ExcludeKey> = {
+  [Property in keyof Type as `get${Capitalize<
+    Exclude<string & keyof Type, ExcludeKey>
+  >}`]?: () => Type[Property];
+};
+
+const solutionType: SolutionType<Student, PrivateStudentInfo> = {
+  getId: () => "2024130045",
+  getPoint: () => "100",
+  getGrade: () => "A",
+};
+```
