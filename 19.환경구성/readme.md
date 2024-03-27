@@ -465,3 +465,150 @@ submitButton?.remove(); // ✅
   ```javascript
   const name = "ryu";
   ```
+
+<br/>
+
+## 타입 선언 파일
+
+이 파일은 프로젝트에서 자주 사용되는 공통 타입을 정의하는 파일이다. 또한 프로젝트 전반에 걸쳐 사용되는 라이브러리 타입을 정의할 수도 있다.
+
+만약 공통 타입을 분리하고 별도의 파일로 관리하고 싶다면, `d.ts` 확장자로 타입 선언 파일을 정의하면 된다.
+
+프로젝트 루트 레벨에서 정의하면, 해당 타입은 프로젝트 내의 TypeScript 파일에서 자동으로 인식된다.
+
+```typescript
+// index.d.ts
+interface User {
+  id: string;
+  name: string;
+}
+```
+
+```typescript
+// index.ts
+// ✅ 별도의 파일을 임포트하지 않아도 타입을 사용할 수 있다
+const user: User = {
+  id: "1111",
+  name: "ryu",
+};
+```
+
+### vs `.ts` 파일 내 타입 정의
+
+프로젝트 공통 타입들을 `별도의 타입스크립트 파일에 정의하여 관리`할 수도 있다.
+
+프로젝트 내 공통 타입만 정의한다고 가정하고 타입 선언 코드만 작성한 파일을 만들어 사용할 수 있다. 그러나 타입 이외의 코드를 작성하는 것을 시스템적으로 방지할 수는 없다. (공통 타입 이외의 코드가 추가될 가능성 있음)
+
+```typescript
+// types.ts
+export interface User {
+  id: string;
+  name: string;
+}
+```
+
+```typescript
+// index.ts
+import { User } from "./types"; // ✅ 타입을 임포트하여 사용
+
+const user: User = {
+  id: "1111",
+  name: "ryu",
+};
+```
+
+타입 코드를 어디에 작성하든 상관없다. 팀 컨벤션에 맞게 타입 코드를 별도의 파일로 분리하여 관리하자.
+
+<br/>
+
+## 외부 라이브러리 사용하기
+
+타입스크립트 프로젝트에서 외부 라이브러리를 사용할 때, 자바스크립트로 작성된 외부 라이브러리의 타입을 정의하는 방법을 알아보자.
+
+### 1️⃣ 외부 라이브러리의 타입 선언 패키지 사용하기
+
+외부 라이브러리의 타입 선언 파일은 [NPM 공식 사이트](https://www.npmjs.com/)에서 패키지를 검색하여 타입선언 파일을 지원하는지 확인하고, `@types/라이브러리 이름` 으로 패키지가 있는지 확인한 후 프로젝트에 설치해서 사용하면 된다.
+
+#### 1) 타입선언 파일을 지원하는지 확인하기
+
+- 사용자들이 특정 라이브러리에 대한 타입을 정의해서 `Definitely Typed`라는 깃허브 저장소에 공유해놓은 경우, 해당 타입 선언 파일을 사용할 수 있다
+
+- [NPM 공식 사이트](https://www.npmjs.com/)에서 라이브러리를 검색하면, 패키지 소개 화면에서 'DT' 아이콘을 확인할 수 있다. 이는 `Definitely Typed` 레포지토리에 해당 라이브러리의 타입 선언 파일이 있음을 의미한다
+
+  <img width="800" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/06c2fd2f-1501-4a13-8ed0-11f1368a5849">
+
+#### 2) 타입선언 패키지가 있는지 확인하기
+
+- 실제로 타입 선언 파일(`@types` 패키지)이 존재하는지 확인하려면, [NPM 공식 사이트](https://www.npmjs.com/)에서 `@types/라이브러리명`을 검색해보면 된다
+
+  <img width="800" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/806558b8-6743-45e0-bd50-bba45d3e8230">
+
+#### 3) 프로젝트에 설치하기
+
+- `@types` 패키지란, `Definitely Typed` 레포지토리에 있는 타입 선언 파일을 패키지화한 것이다
+
+  - `@types` 패키지를 설치하면, 해당 라이브러리의 타입 선언 파일을 사용할 수 있다
+
+    ```bash
+    # @types/jquery 패키지 설치
+    npm i @types/jquery
+    ```
+
+  - 패키지를 정상적으로 설치하면, `package.json` 파일의 `dependencies` 속성에 `@types/jquery` 패키지가 설치되어 있다. 그리고 `node_modules/@types` 폴더에 타입 선언 파일이 설치된다
+
+    <img width="545" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/dbc34262-15cd-46fd-8aa8-634bb852fefe">
+
+### 2️⃣ 외부 라이브러리에 내장된 타입 선언 파일 사용하기
+
+외부 라이브러리에 자체적으로 타입이 정의되어 있는 경우, 별도의 타입 선언 파일을 작성하지 않아도 된다.
+
+axios 라이브러리를 설치하고 `node_modules/axios` 폴더를 확인해보면, `index.d.ts` 타입 선언 파일이 내장되어 있음을 확인할 수 있다. 그렇기 때문에 axios는 별도의 타입 선언 라이브러리를 추가하지 않고도 타입스크립트 프로젝트에서 바로 사용할 수 있다.
+
+<img width="842" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/dbe52b6c-0e70-4063-8047-ed5867e4649d">
+
+#### ✔️ 라이브러리가 타입스크립트 타입 선언을 내장하고 있는지 확인하는 방법
+
+- [NPM 공식 사이트](https://www.npmjs.com/)에서 라이브러리를 검색하면, 패키지 소개 화면에서 'TS' 아이콘을 확인할 수 있다
+
+  - 이는 타입 선언 파일을 같이 제공하고 있음을 의미한다. 해당 로고가 없다면 별도의 타입 선언 파일을 추가해야 한다
+
+    <img width="800" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/d288daad-b12b-4262-8aca-b0a9ddea0990">
+
+### 3️⃣ 외부 라이브러리를 위해 타입 선언 파일 직접 정의하기
+
+DT나 내장 타입 선언 파일이 지원되지 않는 라이브러리의 경우, 직접 타입 선언 파일을 작성하여 사용할 수 있다.
+
+최근에 제작된 라이브러리나 유저가 많은 라이브러리는 대부분 타입스크립트를 잘 지원하는 편이다. 예시를 위해 오래 전에 만들어진 라이브러리인 `datatables`를 살펴보자.
+
+<img width="800" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/af64ce5d-104c-4184-ba87-c77c478109fc">
+
+이 패키지는 제목 우측에 'DT', 'TS' 아이콘이 없으므로 타입 선언 파일을 직접 작성해야 한다.(타입스크립트를 지원하지 않는다)
+
+#### 타입 선언 파일을 직접 작성하는 방법
+
+- 라이브러리의 소스를 모두 확인하고 타입을 정의하는 것이 아니라, 실제로 사용하는 라이브러리의 API나 코드들과 관련된 타입만 정의하면 된다
+
+  ```typescript
+  let table = new DataTable("#table", {
+    // options
+  });
+  ```
+
+  위의 코드는 DataTable 타입이 정의되어 있지 않기 때문에 타입 에러가 발생한다
+
+  <img width="441" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/7f13a952-8140-4092-a691-4c788d99df41">
+
+  <br/>
+
+  - 프로젝트 루트 레벨에 `global.d.ts` 파일을 선언하고, DataTable 타입을 정의한다
+
+    ```typescript
+    // global.d.ts
+    declare class DataTable {
+      constructor(Element: string, options: any) {}
+    }
+    ```
+
+    타입 선언 파일에 클래스 타입으로 타입을 정의했기 때문에, 프로젝트 전체에서 자동으로 해당 타입을 인식해서 에러가 발생하지 않는다
+
+    <img width="621" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/d5fa0ce0-e750-4983-9c2b-2226cb525903">
