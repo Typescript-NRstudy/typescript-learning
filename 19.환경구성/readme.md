@@ -555,7 +555,7 @@ const user: User = {
     ```
 
   - 패키지를 정상적으로 설치하면, `package.json` 파일의 `dependencies` 속성에 `@types/jquery` 패키지가 설치되어 있다. 그리고 `node_modules/@types` 폴더에 타입 선언 파일이 설치된다
-
+    s
     <img width="545" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/dbc34262-15cd-46fd-8aa8-634bb852fefe">
 
 ### 2️⃣ 외부 라이브러리에 내장된 타입 선언 파일 사용하기
@@ -596,19 +596,121 @@ DT나 내장 타입 선언 파일이 지원되지 않는 라이브러리의 경�
 
   위의 코드는 DataTable 타입이 정의되어 있지 않기 때문에 타입 에러가 발생한다
 
-  <img width="441" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/7f13a952-8140-4092-a691-4c788d99df41">
+    <img width="441" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/7f13a952-8140-4092-a691-4c788d99df41">
 
-  <br/>
+    <br/>
 
   - 프로젝트 루트 레벨에 `global.d.ts` 파일을 선언하고, DataTable 타입을 정의한다
 
-    ```typescript
-    // global.d.ts
-    declare class DataTable {
-      constructor(Element: string, options: any) {}
-    }
-    ```
+        ```typescript
+        // global.d.ts
+        declare class DataTable {
+          constructor(Element: string, options: any) {}
+        }
+        ```
 
-    타입 선언 파일에 클래스 타입으로 타입을 정의했기 때문에, 프로젝트 전체에서 자동으로 해당 타입을 인식해서 에러가 발생하지 않는다
+        타입 선언 파일에 클래스 타입으로 타입을 정의했기 때문에, 프로젝트 전체에서 자동으로 해당 타입을 인식해서 에러가 발생하지 않는다
 
-    <img width="621" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/d5fa0ce0-e750-4983-9c2b-2226cb525903">
+        <img width="621" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/d5fa0ce0-e750-4983-9c2b-2226cb525903">
+
+    <br>
+
+## Webpack
+
+웹팩은 `모듈 번들러`이자 프런트엔드 개발 빌드 도구이다.
+
+### Core Concept
+
+- <b>Entry</b>
+- <b>Output</b>
+- <b>Loaders</b>
+- <b>Plugins</b>
+- Mode
+- Browser Compatibility
+
+Core Concept은 6가지인데 기본적으로 알아야 할 것은 `Entry`, `Output`, `Loaders`, `Plugins` 이 4가지이다.
+
+### Entry
+
+Entry는 어떤 파일을 입력 파일로 지정할 것인지 설정하는 속성이다.
+해당 속성을 통해 진입점 파일을 기술하면 된다.
+
+```typescript
+//webpack.config.js
+module.exports = {
+  entry: "./src/index.js",
+};
+```
+
+<br>
+
+### Output
+
+Output은 Entry와 반대로 모듈 번들링의 결과물을 내보낼 위치와 파일의 이름을 지정하는 속성이다.  
+기본적으로는 `root/dist/main.js` 로 설정된다.
+
+```typescript
+//webpack.config.js
+const path = require("path");
+
+module.exports = {
+  entry: "./src/index.js",
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "my-first-webpack.bundle.js",
+  },
+};
+```
+
+### Loaders
+
+Webpack을 통해 트랜스파일링, 이미지 최적화, css 파일 변환, 주석 제거, 코드 난독화 등 여러가지 일을 하게 되는데,  
+이러한 많은 일들을 Webpack이 모두 하게 된다면 Webpack이란 어플리케이션이 너무 무거워지고, 번거로운 업데이트를 자주 하게 될 것이다.
+그래서 Webpack은 Loaders라는 프로그램 구조를 제안하고 있다.
+
+#### Loader란?
+
+Loader라는 작은 프로그램을 Webpack에다가 주입하여 몇몇 기능들은 Loader들에게 일을 전가하게함으로써,
+Webpack의 부담을 덜어주는 역할을 한다.
+이로써 사용자들은 자신의 기호에 맞는 적절한 Webpack을 사용할 수 있게 된다.
+
+```typescript
+//webpack.config.js
+const path = require("path");
+
+module.exports = {
+  output: {
+    filename: "my-first-webpack.bundle.js",
+  },
+  module: {
+    rules: {
+      test: /\.js$/,
+      use: "babel-loader",
+      exclude: /node_modules/,
+    },
+  },
+};
+```
+
+### Plugins
+
+Loader가 입력된 파일들을 어떻게 처리할 것인가에 대한 소프트웨어였다면
+Plugin은 그렇게 처리된 파일들을 최종적으로 어떻게 처리할 것인가에 대한 소프트웨어이다.
+Loader는 Entry에 적용되고 Plugin은 output에 적용되는 소프트웨어라고 생각하면 된다.
+
+```typescript
+//webpack.config.js
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack"); // 내장 plugin에 접근하는 데 사용
+
+module.exports = {
+  module: {
+    rules: {
+      test: /\.js$/,
+      use: "babel-loader",
+      exclude: /node_modules/,
+    },
+  },
+  plugins: [new HtmlWebpackPlugin({ template: "./src/index.html" })],
+};
+```
