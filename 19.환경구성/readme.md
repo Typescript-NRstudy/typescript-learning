@@ -554,8 +554,8 @@ const user: User = {
     npm i @types/jquery
     ```
 
-  - 패키지를 정상적으로 설치하면, `package.json` 파일의 `dependencies` 속성에 `@types/jquery` 패키지가 설치되어 있다. 그리고 `node_modules/@types` 폴더에 타입 선언 파일이 설치된다
-    s
+  - 패키지를 정상적으로 설치하면, `package.json` 파일의 `dependencies` 속성에 `@types/jquery` 패키지가 설치되어 있다. 그리고 `node_modules/@types` 폴더에 타입 선언 파일이 설치된다.
+
     <img width="545" alt="image" src="https://github.com/Typescript-NRstudy/typescript-learning/assets/135115849/dbc34262-15cd-46fd-8aa8-634bb852fefe">
 
 ### 2️⃣ 외부 라이브러리에 내장된 타입 선언 파일 사용하기
